@@ -65,7 +65,7 @@ def save_pluviometer_data(data):
         with open(file_path, 'a') as f:
             if write_header:
                 f.write(f"TIPO:PLUVIOMETRIA\n")
-                f.write(f"NOMBRE:{station_name}_PLUVIO\n")
+                f.write(f"NOMBRE:{station_name}\n")
                 f.write(f"IDENTIFICADOR:{station_number}\n")
                 f.write("FECHA\tTIEMPO\tNIVEL\tBATERIA\n")
                 f.write("\t\tmilimetros\tvoltios\n")
