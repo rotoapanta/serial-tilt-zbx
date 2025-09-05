@@ -3,6 +3,8 @@ Parses raw data from the serial port.
 """
 import re
 
+from config.station_mapping import STATION_NAMES
+
 def parse_raw_data(raw_bytes):
     """
     Parses a raw byte string from the serial port that includes a binary header.
@@ -52,8 +54,11 @@ def parse_raw_data(raw_bytes):
         if len(inclinometer_values) != 4 or len(pluviometer_values) != 2:
             return None
 
+        station_name = STATION_NAMES.get(station_number, f"Unknown_{station_number}")
+
         parsed_data = {
             "type": "TILT_RAIN",
+            "station_name": station_name,
             "station_type": station_type,
             "station_number": station_number,
             "network_id": network_id,
