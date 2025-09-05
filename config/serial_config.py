@@ -35,4 +35,20 @@ SERIAL_PORTS = [
         "stopbits": 1,
         "timeout": 1,
     },
+    {
+        "port": "/dev/ttyUSB4",
+        "baudrate": 9600,
+        "bytesize": 8,
+        "parity": 'N',
+        "stopbits": 1,
+        "timeout": 1,
+    },
+    {
+        "port": "/dev/ttyUSB5",
+        "baudrate": 9600,
+        "bytesize": 8,
+        "parity": 'N',
+        "stopbits": 1,
+        "timeout": 1,
+    },
 ]
