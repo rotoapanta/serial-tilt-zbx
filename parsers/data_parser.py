@@ -1,53 +1,53 @@
 """
 Parses raw data from the serial port.
 """
-import struct
+import re
 
 def parse_raw_data(raw_bytes):
     """
-    Parses a raw byte string from the inclinometer and pluviometer.
+    Parses a raw byte string from the serial port that includes a binary header.
     
     Args:
         raw_bytes (bytes): The raw byte string from the serial port.
+        Example hex: 7e...7e7e...7e0a
         
     Returns:
         A dictionary with the parsed data, or None if parsing fails.
     """
-    if not (raw_bytes.startswith(b'~') and raw_bytes.endswith(b'~\n')):
-        return None
+    try:
+        # The full line is expected to be b'~...~~...~\n'
+        if not raw_bytes.startswith(b'~') or b'~~' not in raw_bytes:
+            return None
 
-    # The data seems to be split by ~~, let's find the parts
-    parts = raw_bytes.strip().split(b'~~~')
-    if len(parts) != 2:
-        # Fallback for the previous format for a bit more of compatibility
+        # b'~A~~B~\n'.strip() -> b'~A~~B~'
+        # .split(b'~~') -> [b'~A', b'B~']
         parts = raw_bytes.strip().split(b'~~')
         if len(parts) != 2:
             return None
 
-    try:
-        inclinometer_part = parts[0]
-        pluviometer_part = parts[1]
+        # --- Inclinometer Part ---
+        # parts[0] is b'~A' where A is the inclinometer frame content
+        inclinometer_frame = parts[0]
+        if not inclinometer_frame.startswith(b'~'):
+            return None
 
-        # --- Inclinometer Data --- 
-        # Header: 7e 1c 00 00 00 00 00 01 01 00 01
-        # Data: 2d 30 30 34 34 2e 37 2b 30 30 39 37 2e 38 2b 30 30 30 39 2e 34 2b 30 30 31 32 2e 30
-        # Footer: 00 00 7e
-        inclinometer_data = inclinometer_part.strip(b'~')
-        station_type = inclinometer_data[7]
-        station_number = inclinometer_data[8]
-        network_id = inclinometer_data[10]
+        # Get header data from the inclinometer frame (indices are 0-based from the start of the frame)
+        station_type = inclinometer_frame[7]
+        station_number = inclinometer_frame[8]
+        network_id = inclinometer_frame[10]
 
-        # Extract the data part and decode it
-        inclinometer_values_raw = inclinometer_data[11:34].decode('utf-8')
-        inclinometer_values = re.findall(r'([+-]\d+\.\d+)', inclinometer_values_raw)
+        # Decode the ASCII part of the frame (from index 11 onwards) and find values
+        inclinometer_ascii_part = inclinometer_frame[11:].decode('ascii', errors='ignore')
+        pattern = r'([+-]\d+\.\d+)'
+        inclinometer_values = re.findall(pattern, inclinometer_ascii_part)
 
-        # --- Pluviometer Data ---
-        # Header: 0e 00 00 00 00 00 00 01 00 01
-        # Data: 2b 30 30 30 30 2e 30 2b 30 30 31 32 2e 30
-        # Footer: 00 00 7e
-        pluviometer_data = pluviometer_part.strip(b'~')
-        pluviometer_values_raw = pluviometer_data[10:25].decode('utf-8')
-        pluviometer_values = re.findall(r'([+-]\d+\.\d+)', pluviometer_values_raw)
+        # --- Pluviometer Part ---
+        # parts[1] is b'B~'. We reconstruct the full frame to be `~B~`
+        pluviometer_frame = b'~' + parts[1]
+        
+        # The ASCII part starts at index 10 of the pluviometer frame
+        pluviometer_ascii_part = pluviometer_frame[10:].decode('ascii', errors='ignore')
+        pluviometer_values = re.findall(pattern, pluviometer_ascii_part)
 
         if len(inclinometer_values) != 4 or len(pluviometer_values) != 2:
             return None
@@ -69,7 +69,5 @@ def parse_raw_data(raw_bytes):
             }
         }
         return parsed_data
-    except (ValueError, IndexError, struct.error):
+    except (ValueError, IndexError):
         return None
-
-import re
