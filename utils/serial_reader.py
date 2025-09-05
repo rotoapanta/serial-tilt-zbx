@@ -23,9 +23,12 @@ def read_serial_port(port_config):
         ) as ser:
             print(f"Successfully opened port {port_config['port']}")
             while True:
-                line = ser.readline().decode("utf-8").strip()
-                if line:
+                raw_bytes = ser.readline()
+                if raw_bytes:
+                    hex_representation = raw_bytes.hex(' ')
+                    line = raw_bytes.decode("utf-8").strip()
                     print(f"Received raw data from {port_config['port']}: {line}")
+                    print(f"Hex data from {port_config['port']}: {hex_representation}")
                     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     parsed_data = parse_raw_data(line)
                     if parsed_data:
