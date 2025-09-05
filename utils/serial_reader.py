@@ -10,6 +10,7 @@ from datetime import datetime
 from config.serial_config import SERIAL_PORTS
 from parsers.data_parser import parse_raw_data
 from utils.data_storage import save_inclinometer_data, save_pluviometer_data
+from utils.zabbix_sender import send_inclinometer_to_zabbix, send_pluviometer_to_zabbix
 
 def read_serial_port(port_config):
     """Reads data from a serial port, parses it, and prints the result."""
@@ -36,6 +37,10 @@ def read_serial_port(port_config):
                         # Save the data to the respective files
                         save_inclinometer_data(parsed_data)
                         save_pluviometer_data(parsed_data)
+
+                        # Send the data to Zabbix
+                        send_inclinometer_to_zabbix(parsed_data)
+                        send_pluviometer_to_zabbix(parsed_data)
     except serial.SerialException as e:
         print(f"Error opening port {port_config['port']}: {e}")
 
