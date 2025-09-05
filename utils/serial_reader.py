@@ -9,6 +9,7 @@ from datetime import datetime
 
 from config.serial_config import SERIAL_PORTS
 from parsers.data_parser import parse_raw_data
+from utils.data_storage import save_inclinometer_data, save_pluviometer_data
 
 def read_serial_port(port_config):
     """Reads data from a serial port, parses it, and prints the result."""
@@ -32,6 +33,9 @@ def read_serial_port(port_config):
                     parsed_data = parse_raw_data(raw_bytes)
                     if parsed_data:
                         print(f"{timestamp} - {port_config['port']}: {parsed_data}")
+                        # Save the data to the respective files
+                        save_inclinometer_data(parsed_data)
+                        save_pluviometer_data(parsed_data)
     except serial.SerialException as e:
         print(f"Error opening port {port_config['port']}: {e}")
 
