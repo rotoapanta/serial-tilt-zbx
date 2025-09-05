@@ -25,6 +25,7 @@ def read_serial_port(port_config):
             while True:
                 line = ser.readline().decode("utf-8").strip()
                 if line:
+                    print(f"Received raw data from {port_config['port']}: {line}")
                     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     parsed_data = parse_raw_data(line)
                     if parsed_data:
