@@ -26,11 +26,10 @@ def read_serial_port(port_config):
                 raw_bytes = ser.readline()
                 if raw_bytes:
                     hex_representation = raw_bytes.hex(' ')
-                    line = raw_bytes.decode("utf-8").strip()
-                    print(f"Received raw data from {port_config['port']}: {line}")
+                    print(f"Received raw bytes from {port_config['port']}: {raw_bytes!r}")
                     print(f"Hex data from {port_config['port']}: {hex_representation}")
                     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    parsed_data = parse_raw_data(line)
+                    parsed_data = parse_raw_data(raw_bytes)
                     if parsed_data:
                         print(f"{timestamp} - {port_config['port']}: {parsed_data}")
     except serial.SerialException as e:
