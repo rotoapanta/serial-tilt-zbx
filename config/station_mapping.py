@@ -12,7 +12,7 @@ STATION_NAMES = {
     7: "CAYM",
     8: "PONDOA",
     9: "COTOR",
-    10: "MANDUR"    # cambiar en estacion
+    10: "MANDUR",    # cambiar en estacion
     11: "GGPA",
     # Add other station mappings here
 }
