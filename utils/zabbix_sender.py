@@ -3,6 +3,7 @@ Handles sending data to a Zabbix server using zabbix_sender.
 """
 import subprocess
 import logging
+from config.app_config import APP_CONFIG
 from config.zabbix_config import ZABBIX_SERVER, ZABBIX_PORT
 
 def _send_to_zabbix(host_name, key, value):
@@ -36,43 +37,43 @@ def _send_to_zabbix(host_name, key, value):
         logger.error(f"Zabbix sender command timed out for host '{host_name}'.")
 
 def send_inclinometer_to_zabbix(data):
-    """Prepares and sends inclinometer data to Zabbix."""
+    """Prepares and sends inclinometer data to Zabbix dynamically."""
     logger = logging.getLogger(__name__)
     try:
         base_station_name = data['station_name']
         incli_data = data['inclinometer']
-        
         host_name = f"{base_station_name}_IN"
-        
-        zabbix_keys = {
-            "axis.radial": incli_data['radial'],
-            "axis.tangential": incli_data['tangential'],
-            "incl.temp": incli_data['temperature'],
-            "incl.vbat": incli_data['voltage']
-        }
-        
-        for key, value in zabbix_keys.items():
-            _send_to_zabbix(host_name, key, value)
-            
+
+        # Get the key mapping from the config
+        key_map = APP_CONFIG.get("zabbix_keys", {}).get("inclinometer", {})
+
+        for data_key, value in incli_data.items():
+            zabbix_key = key_map.get(data_key)
+            if zabbix_key:
+                _send_to_zabbix(host_name, zabbix_key, value)
+            else:
+                logger.warning(f"No Zabbix key mapping found for inclinometer data '{data_key}'.")
+
     except KeyError as e:
         logger.error(f"Error preparing inclinometer data for Zabbix: Missing key {e}")
 
 def send_pluviometer_to_zabbix(data):
-    """Prepares and sends pluviometer data to Zabbix."""
+    """Prepares and sends pluviometer data to Zabbix dynamically."""
     logger = logging.getLogger(__name__)
     try:
         base_station_name = data['station_name']
         pluvio_data = data['pluviometer']
-        
         host_name = f"{base_station_name}_PL"
-        
-        zabbix_keys = {
-            "rain.level": pluvio_data['rain_level'],
-            "pluvio.vbat": pluvio_data['voltage']
-        }
-        
-        for key, value in zabbix_keys.items():
-            _send_to_zabbix(host_name, key, value)
+
+        # Get the key mapping from the config
+        key_map = APP_CONFIG.get("zabbix_keys", {}).get("pluviometer", {})
+
+        for data_key, value in pluvio_data.items():
+            zabbix_key = key_map.get(data_key)
+            if zabbix_key:
+                _send_to_zabbix(host_name, zabbix_key, value)
+            else:
+                logger.warning(f"No Zabbix key mapping found for pluviometer data '{data_key}'.")
 
     except KeyError as e:
         logger.error(f"Error preparing pluviometer data for Zabbix: Missing key {e}")

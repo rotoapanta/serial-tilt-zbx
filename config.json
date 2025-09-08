@@ -42,5 +42,17 @@
             "stopbits": 1,
             "timeout": 1
         }
-    ]
+    ],
+    "zabbix_keys": {
+        "inclinometer": {
+            "radial": "tilt.radial",
+            "tangential": "tilt.tangential",
+            "temperature": "tilt.temp",
+            "voltage": "tilt.vbat"
+        },
+        "pluviometer": {
+            "rain_level": "rain.level",
+            "voltage": "rain.vbat"
+        }
+    }
 }
