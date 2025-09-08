@@ -2,9 +2,11 @@
 Handles storage of parsed data into TSV files.
 """
 import os
+import logging
 from datetime import datetime
+from config.app_config import APP_CONFIG
 
-BASE_DIR = "./DTA"
+BASE_DIR = APP_CONFIG.get("base_dir", "./DTA")
 
 def _ensure_dir_exists(path):
     """Creates a directory if it does not exist."""
@@ -42,7 +44,7 @@ def save_inclinometer_data(data):
             f.write(f"{date_str}\t{time_str}\t{incli_data['radial']}\t{incli_data['tangential']}\t{incli_data['temperature']}\t{incli_data['voltage']}\n")
             
     except (KeyError, IOError) as e:
-        print(f"Error saving inclinometer data: {e}")
+        logging.getLogger(__name__).error(f"Error saving inclinometer data: {e}")
 
 def save_pluviometer_data(data):
     """Saves pluviometer data to a TSV file."""
@@ -76,4 +78,4 @@ def save_pluviometer_data(data):
             f.write(f"{date_str}\t{time_str}\t{pluvio_data['rain_level']}\t{pluvio_data['voltage']}\n")
 
     except (KeyError, IOError) as e:
-        print(f"Error saving pluviometer data: {e}")
+        logging.getLogger(__name__).error(f"Error saving pluviometer data: {e}")
