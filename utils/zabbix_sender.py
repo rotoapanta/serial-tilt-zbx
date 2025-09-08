@@ -2,10 +2,12 @@
 Handles sending data to a Zabbix server using zabbix_sender.
 """
 import subprocess
+import logging
 from config.zabbix_config import ZABBIX_SERVER, ZABBIX_PORT
 
 def _send_to_zabbix(host_name, key, value):
     """Constructs and executes a zabbix_sender command."""
+    logger = logging.getLogger(__name__)
     command = [
         'zabbix_sender',
         '-z', ZABBIX_SERVER,
@@ -16,28 +18,32 @@ def _send_to_zabbix(host_name, key, value):
     ]
     
     try:
-        # We use subprocess.run for a simple, blocking call.
-        # For high-throughput, you might consider asynchronous methods.
         result = subprocess.run(command, capture_output=True, text=True, check=True, timeout=10)
-        print(f"Successfully sent to Zabbix: {host_name} [{key}] = {value}")
-        # For debugging, you can print the output from zabbix_sender
-        # print(result.stdout)
+        logger.info(f"Successfully sent to Zabbix: {host_name} [{key}] = {value}")
+        # The zabbix_sender output can be useful for debugging
+        if result.stdout:
+            logger.debug(f"Zabbix sender output: {result.stdout.strip()}")
     except FileNotFoundError:
-        print("Error: 'zabbix_sender' command not found. Make sure it is installed and in your PATH.")
+        logger.error("'zabbix_sender' command not found. Make sure it is installed and in your PATH.")
     except subprocess.CalledProcessError as e:
-        print(f"Error sending to Zabbix: {e.stderr}")
+        # Log both stdout and stderr from the failed command to get more details
+        logger.error(f"Error sending to Zabbix for host '{host_name}'. Response from server:")
+        if e.stdout:
+            logger.error(f"  stdout: {e.stdout.strip()}")
+        if e.stderr:
+            logger.error(f"  stderr: {e.stderr.strip()}")
     except subprocess.TimeoutExpired:
-        print("Error: Zabbix sender command timed out.")
+        logger.error(f"Zabbix sender command timed out for host '{host_name}'.")
 
 def send_inclinometer_to_zabbix(data):
     """Prepares and sends inclinometer data to Zabbix."""
+    logger = logging.getLogger(__name__)
     try:
         base_station_name = data['station_name']
         incli_data = data['inclinometer']
         
         host_name = f"{base_station_name}_IN"
         
-        # Map your data to the Zabbix keys you have configured
         zabbix_keys = {
             "axis.radial": incli_data['radial'],
             "axis.tangential": incli_data['tangential'],
@@ -49,17 +55,17 @@ def send_inclinometer_to_zabbix(data):
             _send_to_zabbix(host_name, key, value)
             
     except KeyError as e:
-        print(f"Error preparing inclinometer data for Zabbix: Missing key {e}")
+        logger.error(f"Error preparing inclinometer data for Zabbix: Missing key {e}")
 
 def send_pluviometer_to_zabbix(data):
     """Prepares and sends pluviometer data to Zabbix."""
+    logger = logging.getLogger(__name__)
     try:
         base_station_name = data['station_name']
         pluvio_data = data['pluviometer']
         
         host_name = f"{base_station_name}_PL"
         
-        # Map your data to the Zabbix keys you have configured
         zabbix_keys = {
             "rain.level": pluvio_data['rain_level'],
             "pluvio.vbat": pluvio_data['voltage']
@@ -69,4 +75,4 @@ def send_pluviometer_to_zabbix(data):
             _send_to_zabbix(host_name, key, value)
 
     except KeyError as e:
-        print(f"Error preparing pluviometer data for Zabbix: Missing key {e}")
+        logger.error(f"Error preparing pluviometer data for Zabbix: Missing key {e}")
