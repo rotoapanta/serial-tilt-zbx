@@ -11,7 +11,7 @@ echo "--- Iniciando la configuración completa del proyecto serial-tilt-zbx ---"
 echo "[Paso 1/4] Verificando dependencias del sistema (python3, python3-venv, git)..."
 
 # Lista de paquetes requeridos
-PACKAGES="python3 python3-venv git"
+PACKAGES="python3 python3-venv git zabbix-sender"
 PACKAGES_TO_INSTALL=""
 
 for pkg in $PACKAGES; do
