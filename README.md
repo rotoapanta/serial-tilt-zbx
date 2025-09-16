@@ -1,8 +1,18 @@
-# Serial-Tilt-ZBX
+[![Python](https://img.shields.io/badge/Python-3.11-brightgreen)](https://www.python.org/) 
+![GitHub issues](https://img.shields.io/github/issues/rotoapanta/raspberry-api) 
+![GitHub repo size](https://img.shields.io/github/repo-size/rotoapanta/raspberry-api) 
+![GitHub last commit](https://img.shields.io/github/last-commit/rotoapanta/raspberry-api)
+[![Discord Invite](https://img.shields.io/badge/discord-join%20now-green)](https://discord.gg/bf6rWDbJ) 
+[![Docker](https://img.shields.io/badge/Docker-No-brightgreen)](https://www.docker.com/) 
+[![GitHub](https://img.shields.io/badge/GitHub-Project-brightgreen)](https://github.com/rotoapanta/raspberry-api) 
+[![Linux](https://img.shields.io/badge/Linux-Supported-brightgreen)](https://www.linux.org/) 
+[![Author](https://img.shields.io/badge/Roberto%20-Toapanta-brightgreen)](https://www.linkedin.com/in/roberto-carlos-toapanta-g/) 
+[![Version](https://img.shields.io/badge/Version-1.0.0-brightgreen)](#change-log) 
+![GitHub forks](https://img.shields.io/github/forks/rotoapanta/raspberry-api?style=social) 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-![Python Version](https://img.shields.io/badge/python-3.9%2B-blue.svg)
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Status](https://img.shields.io/badge/status-active-success.svg)
+# <p align="center">RSerial-Tilt-ZBX</p>
+
 
 Este proyecto lee, procesa y envía datos de inclinómetros y pluviómetros desde puertos serie a un servidor Zabbix para su monitoreo en tiempo real.
 
