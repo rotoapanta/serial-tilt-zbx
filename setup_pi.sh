@@ -5,7 +5,7 @@
 # Detiene el script si cualquier comando falla
 set -e
 
-echo "--- Iniciando la configuración completa del proyecto serial-tilt-zbx ---"
+echo "--- Iniciando la configuración completa del proyecto Serial Tiltmeter to Zabbix ---"
 
 # 1. Verificar e instalar dependencias del sistema
 echo "[Paso 1/4] Verificando dependencias del sistema (python3, python3-venv, git)..."
