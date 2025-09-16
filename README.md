@@ -11,7 +11,7 @@
 ![GitHub forks](https://img.shields.io/github/forks/rotoapanta/raspberry-api?style=social) 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-# <p align="center">RSerial-Tilt-ZBX</p>
+# <p align="center">Serial-Tilt-ZBX</p>
 
 
 Este proyecto lee, procesa y envía datos de inclinómetros y pluviómetros desde puertos serie a un servidor Zabbix para su monitoreo en tiempo real.
