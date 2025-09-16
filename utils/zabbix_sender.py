@@ -1,5 +1,9 @@
-"""
-Handles sending data to a Zabbix server using zabbix_sender.
+"""Handles the submission of data to a Zabbix server.
+
+This module uses the `zabbix_sender` command-line utility to send data
+points to a Zabbix server. It constructs the necessary commands and handles
+potential errors, such as the command not being found, timeouts, or errors
+returned from the Zabbix server.
 """
 import subprocess
 import logging
@@ -7,7 +11,18 @@ from config.app_config import APP_CONFIG
 from config.zabbix_config import ZABBIX_SERVER, ZABBIX_PORT
 
 def _send_to_zabbix(host_name, key, value):
-    """Constructs and executes a zabbix_sender command."""
+    """Constructs and executes a `zabbix_sender` command to send a single data point.
+
+    This is a helper function that builds the command with the server details,
+    host name, item key, and value. It executes the command as a subprocess,
+    captures the output, and logs the result. It includes error handling for
+    common issues like timeouts or command failures.
+
+    Args:
+        host_name (str): The name of the host in Zabbix to which the data belongs.
+        key (str): The item key in Zabbix for this data point.
+        value (any): The value to be sent. It will be converted to a string.
+    """
     logger = logging.getLogger(__name__)
     command = [
         'zabbix_sender',
@@ -37,7 +52,18 @@ def _send_to_zabbix(host_name, key, value):
         logger.error(f"Zabbix sender command timed out for host '{host_name}'.")
 
 def send_inclinometer_to_zabbix(data):
-    """Prepares and sends inclinometer data to Zabbix dynamically."""
+    """Prepares and sends all inclinometer data points to Zabbix.
+
+    This function extracts the inclinometer data and station name from the main
+    data dictionary. It constructs a Zabbix host name by appending "_IN".
+    It then iterates through the inclinometer data, looks up the corresponding
+    Zabbix item key from the application config, and calls `_send_to_zabbix`
+    for each data point.
+
+    Args:
+        data (dict): The dictionary of parsed data containing 'station_name'
+                     and 'inclinometer' keys.
+    """
     logger = logging.getLogger(__name__)
     try:
         base_station_name = data['station_name']
@@ -58,7 +84,18 @@ def send_inclinometer_to_zabbix(data):
         logger.error(f"Error preparing inclinometer data for Zabbix: Missing key {e}")
 
 def send_pluviometer_to_zabbix(data):
-    """Prepares and sends pluviometer data to Zabbix dynamically."""
+    """Prepares and sends all pluviometer data points to Zabbix.
+
+    This function extracts the pluviometer data and station name from the main
+    data dictionary. It constructs a Zabbix host name by appending "_PL".
+    It then iterates through the pluviometer data, looks up the corresponding
+    Zabbix item key from the application config, and calls `_send_to_zabbix`
+    for each data point.
+
+    Args:
+        data (dict): The dictionary of parsed data containing 'station_name'
+                     and 'pluviometer' keys.
+    """
     logger = logging.getLogger(__name__)
     try:
         base_station_name = data['station_name']

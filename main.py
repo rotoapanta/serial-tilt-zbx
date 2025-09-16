@@ -1,5 +1,9 @@
 """
-Main application file.
+Main entry point for the Serial-Tilt-ZBX application.
+
+This script initializes the logging configuration and starts the serial port
+readers, which run indefinitely to collect, process, and send data from
+sensors to a Zabbix server.
 """
 
 import logging

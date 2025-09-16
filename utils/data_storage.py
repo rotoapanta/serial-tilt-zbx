@@ -1,5 +1,8 @@
-"""
-Handles storage of parsed data into TSV files.
+"""Handles the local storage of sensor data into TSV files.
+
+This module is responsible for writing the parsed inclinometer and pluviometer
+data into structured, daily log files in a Tab-Separated Values (TSV) format.
+It automatically manages directory creation based on sensor type and station name.
 """
 import os
 import logging
@@ -9,11 +12,28 @@ from config.app_config import APP_CONFIG
 BASE_DIR = APP_CONFIG.get("base_dir", "./DTA")
 
 def _ensure_dir_exists(path):
-    """Creates a directory if it does not exist."""
+    """Ensures that a directory exists, creating it if necessary.
+
+    This is a helper function that uses `os.makedirs` with `exist_ok=True`
+    to prevent errors if the directory already exists.
+
+    Args:
+        path (str): The full path of the directory to create.
+    """
     os.makedirs(path, exist_ok=True)
 
 def save_inclinometer_data(data):
-    """Saves inclinometer data to a TSV file."""
+    """Saves inclinometer data to a daily TSV file.
+
+    Extracts inclinometer data from the parsed data dictionary, creates a
+    directory structure (`<BASE_DIR>/INCLINOMETRIA/<station_name>/`),
+    and appends a new line to a file named with the current date (YYYY-M-D.tsv).
+    If the file doesn't exist, it adds a multi-line header first.
+
+    Args:
+        data (dict): The dictionary of parsed data containing 'station_name',
+                     'station_number', and 'inclinometer' keys.
+    """
     try:
         station_name = data['station_name']
         station_number = data['station_number']
@@ -47,7 +67,17 @@ def save_inclinometer_data(data):
         logging.getLogger(__name__).error(f"Error saving inclinometer data: {e}")
 
 def save_pluviometer_data(data):
-    """Saves pluviometer data to a TSV file."""
+    """Saves pluviometer data to a daily TSV file.
+
+    Extracts pluviometer data from the parsed data dictionary, creates a
+    directory structure (`<BASE_DIR>/PLUVIOMETRIA/<station_name>/`),
+    and appends a new line to a file named with the current date (YYYY-M-D.tsv).
+    If the file doesn't exist, it adds a multi-line header first.
+
+    Args:
+        data (dict): The dictionary of parsed data containing 'station_name',
+                     'station_number', and 'pluviometer' keys.
+    """
     try:
         station_name = data['station_name']
         station_number = data['station_number']

@@ -1,5 +1,8 @@
-"""
-Logging configuration for the application.
+"""Configures the logging setup for the entire application.
+
+This module provides a centralized function to configure the root logger.
+It sets up logging to both a rotating file and the console (stdout), ensuring
+that log messages are captured and managed effectively.
 """
 
 import logging
@@ -8,8 +11,14 @@ from logging.handlers import RotatingFileHandler
 from config.app_config import APP_CONFIG
 
 def setup_logging():
-    """
-    Configures the logging for the application with log rotation.
+    """Sets up the root logger with file and console handlers.
+
+    This function configures the application's logging to output messages to both
+    a rotating log file (`app.log` by default) and the standard output.
+    The log file rotates when it reaches a certain size to prevent it from
+    growing indefinitely.
+
+    Configuration details (like log file name) are pulled from `APP_CONFIG`.
     """
     log_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     log_file = APP_CONFIG.get("log_file", "app.log")

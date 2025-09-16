@@ -1,20 +1,35 @@
-"""
-Core functionality for reading from serial ports.
+"""Handles the concurrent reading of multiple serial ports.
+
+This module is responsible for:
+- Creating and managing a separate thread for each serial port defined in the
+  configuration.
+- Continuously reading data from each port.
+- Handling serial port errors (e.g., disconnection) and attempting to
+  reconnect automatically.
+- Passing the raw data read from the port to the data processor.
 """
 
 import logging
 import serial
 import threading
 import time
-from datetime import datetime
 
-from config.serial_config import SERIAL_PORTS
 from config.serial_config import SERIAL_PORTS
 from utils.data_processor import process_data
 
 
 def read_serial_port(port_config):
-    """Reads data from a serial port and attempts to reconnect on failure."""
+    """Continuously reads data from a single serial port in an infinite loop.
+
+    This function opens a serial port based on the provided configuration.
+    It reads data line by line and passes it to `process_data`. If the port
+    cannot be opened or an error occurs during reading, it logs the error
+    and attempts to reconnect after a short delay.
+
+    Args:
+        port_config (dict): A dictionary containing the configuration for the
+                            serial port (e.g., 'port', 'baudrate').
+    """
     logger = logging.getLogger(__name__)
     port_name = port_config['port']
     while True:
@@ -42,7 +57,13 @@ def read_serial_port(port_config):
             time.sleep(5)
 
 def start_serial_readers():
-    """Starts a thread for each serial port to read data simultaneously."""
+    """Initializes and starts a daemon thread for each configured serial port.
+
+    This function iterates through the `SERIAL_PORTS` configuration, creating a
+    separate thread for each port that targets the `read_serial_port` function.
+    It then keeps the main thread alive by joining the threads, allowing the
+    program to run indefinitely until interrupted (e.g., with Ctrl+C).
+    """
     logger = logging.getLogger(__name__)
     threads = []
     for port_config in SERIAL_PORTS:

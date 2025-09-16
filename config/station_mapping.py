@@ -1,5 +1,9 @@
-"""
-Mapping from station number to station name.
+"""Provides a mapping from numeric station IDs to human-readable station names.
+
+This module defines the `STATION_NAMES` dictionary, which is used to translate
+the station number received in a data frame into a descriptive name. This name
+is then used for logging, local data storage paths, and as a base for the
+Zabbix host name.
 """
 
 STATION_NAMES = {

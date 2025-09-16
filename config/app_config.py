@@ -1,12 +1,24 @@
-"""
-Application configuration loader.
+"""Loads and provides the main application configuration.
+
+This module is responsible for loading the central `config.json` file.
+It defines a global `APP_CONFIG` dictionary that can be imported by other
+modules to access configuration parameters like log file paths, Zabbix key
+mappings, etc.
 """
 
 import json
 import logging
 
 def load_app_config():
-    """Loads the application configuration from config.json."""
+    """Loads the main application configuration from the `config.json` file.
+
+    This function attempts to open and parse `config.json`. It includes error
+    handling for cases where the file is not found or contains invalid JSON,
+    returning an empty dictionary in such cases to prevent crashes.
+
+    Returns:
+        dict: A dictionary containing the application configuration.
+    """
     logger = logging.getLogger(__name__)
     try:
         with open("config.json", "r") as f:

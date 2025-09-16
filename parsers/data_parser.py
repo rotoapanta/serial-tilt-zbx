@@ -1,20 +1,28 @@
-"""
-Parses raw data from the serial port.
+"""Parses proprietary data frames from the sensors.
+
+This module is responsible for decoding the specific data format sent by the
+inclinometer and pluviometer sensors. The format is a hybrid of binary and ASCII
+characters, delimited by tilde (`~`) characters.
 """
 import re
+import logging
 
 from config.station_mapping import STATION_NAMES
 
 def parse_raw_data(raw_bytes):
-    """
-    Parses a raw byte string from the serial port that includes a binary header.
-    
+    """Parses a raw, hybrid binary/ASCII byte string from the sensors.
+
+    The expected data frame has a structure like `~<inclinometer_frame>~~<pluviometer_frame>~\n`.
+    This function splits the frame into its two main parts, extracts binary header
+    information (like station ID) from the first part, and uses regular expressions
+    to find floating-point values in the ASCII parts of both frames.
+
     Args:
-        raw_bytes (bytes): The raw byte string from the serial port.
-        Example hex: 7e...7e7e...7e0a
-        
+        raw_bytes (bytes): The raw byte string read from the serial port.
+
     Returns:
-        A dictionary with the parsed data, or None if parsing fails.
+        dict: A dictionary containing the structured, parsed data if successful.
+        None: If the frame is malformed, incomplete, or cannot be parsed.
     """
     try:
         # The full line is expected to be b'~...~~...~\n'
@@ -74,5 +82,6 @@ def parse_raw_data(raw_bytes):
             }
         }
         return parsed_data
-    except (ValueError, IndexError):
+    except (ValueError, IndexError, TypeError) as e:
+        logging.getLogger(__name__).error(f"Failed to parse raw data: {raw_bytes!r}. Error: {e}")
         return None

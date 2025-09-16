@@ -1,5 +1,8 @@
-"""
-Unit tests for the data parser.
+"""Unit tests for the data parser module.
+
+This test suite verifies that the `parse_raw_data` function in the
+`parsers.data_parser` module correctly handles both valid and invalid
+data frames.
 """
 
 import unittest
@@ -7,9 +10,10 @@ from parsers.data_parser import parse_raw_data
 from config.station_mapping import STATION_NAMES
 
 class TestDataParser(unittest.TestCase):
+    """Test suite for the `parse_raw_data` function."""
 
     def test_valid_data_parsing(self):
-        """Test that valid raw data is parsed correctly."""
+        """Tests that a well-formed, valid raw data frame is parsed correctly."""
         # This is a sample byte string that mimics the expected format.
         # You should replace this with a real example from your device.
         raw_data = b'~\x00\x01\x02\x03\x04\x05\x01\x01\x00\x01RD+12.34,TD+56.78,T+25.5,V+3.3~~\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09RAIN+1.2,V+3.4~\n'
@@ -20,13 +24,13 @@ class TestDataParser(unittest.TestCase):
         self.assertEqual(parsed_data['pluviometer']['rain_level'], 1.2)
 
     def test_invalid_data_returns_none(self):
-        """Test that invalid or incomplete data returns None."""
+        """Tests that various types of invalid or incomplete data correctly return None."""
         self.assertIsNone(parse_raw_data(b'invalid data'))
         self.assertIsNone(parse_raw_data(b'~missing~~parts~'))
         self.assertIsNone(parse_raw_data(b'~too~~many~~parts~'))
 
     def test_malformed_frame_returns_none(self):
-        """Test that malformed frames return None."""
+        """Tests that a frame with a malformed (incomplete) section returns None."""
         # Malformed inclinometer part
         raw_data = b'~\x00\x01\x02\x03\x04\x05\x01\x01\x00\x01RD+12.34,TD+56.78~~\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09RAIN+1.2,V+3.4~\n'
         self.assertIsNone(parse_raw_data(raw_data))
