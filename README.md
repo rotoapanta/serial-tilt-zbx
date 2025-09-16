@@ -1,56 +1,112 @@
-# serial-tilt-zbx
+# Serial-Tilt-ZBX
 
 ![Python Version](https://img.shields.io/badge/python-3.9%2B-blue.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 
-Este proyecto lee datos de inclinómetros y pluviómetros desde puertos serie, los procesa y los envía a un servidor Zabbix para su monitoreo.
+Este proyecto lee, procesa y envía datos de inclinómetros y pluviómetros desde puertos serie a un servidor Zabbix para su monitoreo en tiempo real.
 
 ## Características
 
-- Lectura concurrente de múltiples puertos serie.
-- Procesamiento y parseo de datos en tiempo real.
-- Envío de datos a Zabbix para monitoreo.
-- Logging robusto con rotación de archivos.
-- Manejo de errores y reconexión automática.
-- Configuración externalizada en formato JSON.
-- Pruebas unitarias para asegurar la calidad del código.
+- **Lectura Concurrente:** Monitorea múltiples puertos serie de forma simultánea.
+- **Procesamiento de Datos:** Parsea tramas de datos específicas de los sensores.
+- **Integración con Zabbix:** Utiliza `zabbix_sender` para enviar métricas a un servidor Zabbix.
+- **Logging Robusto:** Registra la actividad de la aplicación, incluyendo errores, con rotación de archivos.
+- **Configuración Flexible:** Gestiona la configuración de puertos y Zabbix a través de archivos externos.
+- **Instalación Automatizada:** Incluye scripts para facilitar la configuración en Raspberry Pi.
+- **Ejecución como Servicio:** Permite la instalación como un servicio `systemd` para operación continua.
 
-## Instalación
+## Requisitos del Sistema
 
-1. Clona este repositorio:
+Este proyecto está diseñado para sistemas operativos basados en Debian (como Raspberry Pi OS, Ubuntu, etc.). Antes de la instalación, asegúrate de que tu sistema tenga los siguientes paquetes. El script `setup_pi.sh` intentará instalarlos automáticamente.
+
+- `python3`
+- `python3-venv` (para la creación de entornos virtuales)
+- `git` (para clonar el repositorio)
+- `zabbix-sender` (para enviar datos a Zabbix)
+
+---
+
+## Implementación en Raspberry Pi (Recomendado)
+
+Esta es la forma recomendada para poner el sistema en producción. Los scripts automatizan la instalación de dependencias y la configuración del servicio.
+
+### 1. Preparación
+
+- Clona este repositorio en tu Raspberry Pi:
+  ```bash
+  git clone https://github.com/tu-usuario/serial-tilt-zbx.git
+  cd serial-tilt-zbx
+  ```
+
+### 2. Ejecutar el Script de Configuración
+
+- Este script instalará las dependencias del sistema (como `python3-venv` y `zabbix-sender`) y las librerías de Python necesarias.
+  ```bash
+  chmod +x setup_pi.sh
+  ./setup_pi.sh
+  ```
+  *Nota: El script podría solicitar tu contraseña (`sudo`) si necesita instalar paquetes del sistema.*
+
+### 3. Configurar la Aplicación
+
+- **¡MUY IMPORTANTE!** Edita los archivos de configuración para que coincidan con tu hardware y servidor.
+  - `config/serial_config.py`: Ajusta el nombre de los puertos serie (ej. `/dev/ttyUSB0`).
+  - `config/zabbix_config.py`: Define la dirección de tu servidor Zabbix.
+  - `config/station_mapping.py`: Mapea los IDs de las estaciones a los nombres de host de Zabbix.
+
+### 4. Instalar como un Servicio (Opcional pero Recomendado)
+
+- Para que la aplicación se inicie automáticamente y se mantenga en ejecución, instálala como un servicio `systemd`.
+  ```bash
+  chmod +x install_service.sh
+  ./install_service.sh
+  ```
+- El script generará un archivo `.service` y te mostrará los comandos exactos para moverlo, habilitarlo e iniciarlo. Sigue las instrucciones que aparecen en la terminal.
+
+- **Para gestionar el servicio:**
+  - **Ver estado:** `sudo systemctl status serial-tilt-zbx.service`
+  - **Ver logs:** `journalctl -u serial-tilt-zbx.service -f`
+
+---
+
+## Instalación Manual (Entorno de Desarrollo)
+
+Sigue estos pasos para una instalación manual en cualquier sistema Linux.
+
+1. **Clona el repositorio:**
    ```bash
    git clone https://github.com/tu-usuario/serial-tilt-zbx.git
    cd serial-tilt-zbx
    ```
 
-2. (Opcional pero recomendado) Crea un entorno virtual:
+2. **Instala `zabbix-sender`:**
+   - En sistemas Debian/Ubuntu/Raspberry Pi OS:
+     ```bash
+     sudo apt-get update && sudo apt-get install zabbix-sender
+     ```
+
+3. **Crea un entorno virtual y activa:**
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # En Windows usa `venv\Scripts\activate`
+   python3 -m venv venv
+   source venv/bin/activate
    ```
 
-3. **Instala el agente de Zabbix:** Este proyecto utiliza el comando `zabbix_sender` para enviar datos a Zabbix. Asegúrate de que el agente de Zabbix esté instalado en el sistema que ejecuta este script. Puedes encontrar las instrucciones de instalación para tu sistema operativo en la [documentación oficial de Zabbix](https://www.zabbix.com/download_agents).
-
-4. Instala las dependencias de Python:
+4. **Instala las dependencias de Python:**
    ```bash
    pip install -r requirements.txt
    ```
 
-## Uso
-
-1. **Configura los puertos serie:** Edita el archivo `config.json` para definir los puertos serie que quieres monitorear.
-
-2. **Ejecuta la aplicación:**
-   ```bash
-   python main.py
-   ```
-
-3. **Revisa los logs:** Los logs se guardarán en el archivo `app.log`.
+5. **Configura y ejecuta:**
+   - Edita los archivos en el directorio `config/`.
+   - Ejecuta la aplicación:
+     ```bash
+     python main.py
+     ```
 
 ## Pruebas
 
-Para ejecutar las pruebas unitarias, usa el siguiente comando:
+Para ejecutar las pruebas unitarias, usa el siguiente comando desde el directorio raíz del proyecto:
 
 ```bash
 python -m unittest discover tests
