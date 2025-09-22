@@ -17,25 +17,25 @@ This project reads, processes, and sends data from inclinometers and pluviometer
 
 ## Features
 
-- **Concurrent Reading:** Monitors multiple serial ports simultaneously.
-- **Data Processing:** Parses specific data frames from the sensors.
-- **Zabbix Integration:** Uses `zabbix_sender` to send metrics to a Zabbix server.
-- **Robust Logging:** Logs application activity, including errors, with file rotation.
-- **Graceful Shutdown:** Handles SIGINT/SIGTERM to stop threads cleanly.
-- **Thread-Safe Storage:** Prevents race conditions when writing TSV files.
-- **Flexible Configuration:** Manages port and Zabbix settings through external files.
-- **Automated Setup:** Includes scripts to facilitate setup on a Raspberry Pi.
-- **Service Execution:** Allows installation as a `systemd` service for continuous operation.
-- **Serial Port Resilience:** Configurable retry policy per port and an auto re-enable supervisor when ports recover.
+- Concurrent Reading: Monitors multiple serial ports simultaneously.
+- Data Processing: Parses specific data frames from the sensors.
+- Zabbix Integration: Uses `zabbix_sender` to send metrics to a Zabbix server.
+- Robust Logging: Logs application activity, including errors, with file rotation.
+- Graceful Shutdown: Handles SIGINT/SIGTERM to stop threads cleanly.
+- Thread-Safe Storage: Prevents race conditions when writing TSV files.
+- Flexible Configuration: Manages port and Zabbix settings through external files.
+- Automated Setup: Includes scripts to facilitate setup on a Raspberry Pi.
+- Service Execution: Allows installation as a `systemd` service for continuous operation.
+- Serial Port Resilience: Configurable retry policy per port and an auto re-enable supervisor when ports recover.
 
 ## System Requirements
 
 This project is designed for Debian-based operating systems (like Raspberry Pi OS, Ubuntu, etc.). Before installation, ensure your system has the following packages. The `setup_pi.sh` script will attempt to install them automatically.
 
-- `python3`
-- `python3-venv` (for creating virtual environments)
-- `git` (for cloning the repository)
-- `zabbix-sender` (for sending data to Zabbix)
+- python3
+- python3-venv (for creating virtual environments)
+- git (for cloning the repository)
+- zabbix-sender (for sending data to Zabbix)
 
 ---
 
@@ -58,11 +58,11 @@ This is the recommended way to deploy the system in a production environment. Th
   chmod +x setup_pi.sh
   ./setup_pi.sh
   ```
-  *Note: The script may ask for your `sudo` password if it needs to install system packages.*
+  Note: The script may ask for your `sudo` password if it needs to install system packages.
 
 ### 3. Configure the Application
 
-- **VERY IMPORTANT!** Edit the configuration files to match your hardware and server.
+- VERY IMPORTANT: Edit the configuration files to match your hardware and server.
   - `config.json`: Define `serial_ports` and (optionally) retry/supervisor settings under `serial_retry` and `serial_supervisor`.
   - `config/zabbix_config.py`: Set your Zabbix server address.
   - `config/station_mapping.py`: Map station IDs to Zabbix host names.
@@ -101,9 +101,9 @@ This is the recommended way to deploy the system in a production environment. Th
   sudo systemctl start serial-tilt-zbx.service
   ```
 
-- **To manage the service:**
-  - **Check status:** `sudo systemctl status serial-tilt-zbx.service`
-  - **View logs:** `journalctl -u serial-tilt-zbx.service -f`
+- To manage the service:
+  - Check status: `sudo systemctl status serial-tilt-zbx.service`
+  - View logs: `journalctl -u serial-tilt-zbx.service -f`
 
 ---
 
@@ -111,31 +111,31 @@ This is the recommended way to deploy the system in a production environment. Th
 
 Follow these steps for a manual installation on any Linux system.
 
-1. **Clone the repository:**
+1. Clone the repository:
    ```bash
    git clone https://github.com/your-user/serial-tilt-zbx.git
    cd serial-tilt-zbx
    ```
 
-2. **Install `zabbix-sender`:**
+2. Install `zabbix-sender`:
    - On Debian/Ubuntu/Raspberry Pi OS systems:
      ```bash
      sudo apt-get update && sudo apt-get install zabbix-sender
      ```
 
-3. **Create and activate a virtual environment:**
+3. Create and activate a virtual environment:
    ```bash
    python3 -m venv venv
    source venv/bin/activate
    ```
 
-4. **Install Python dependencies:**
+4. Install Python dependencies:
    ```bash
    pip install --upgrade pip setuptools wheel
    pip install -r requirements.txt
    ```
 
-5. **Configure and run:**
+5. Configure and run:
    - Edit the files in the `config/` directory.
    - Run the application:
      ```bash
@@ -181,6 +181,46 @@ python -m unittest discover tests
 ## Data files
 
 TSV headers include a blank line after `IDENTIFICADOR:` before the `FECHA`/`TIEMPO` header line.
+
+## Console output example
+
+![Console Output](images/console-output.png)
+
+Example text output:
+
+```
+(venv) pi@raspi-tilt:~/Documents/Projects/serial-tilt-zbx $ python main.py
+
+2025-09-22 16:47:08,333 - root - INFO - ==================================================
+
+2025-09-22 16:47:08,334 - root - INFO - Serial Tiltmeter to Zabbix Application Started
+
+2025-09-22 16:47:08,335 - root - INFO - ==================================================
+
+2025-09-22 16:47:08,336 - utils.zabbix_sender - INFO - zabbix_sender binary found.
+
+2025-09-22 16:47:08,349 - utils.zabbix_sender - INFO - Connectivity to Zabbix 192.168.1.143:10051 OK.
+
+2025-09-22 16:47:08,350 - root - INFO - Starting serial port readers...
+
+2025-09-22 16:47:08,361 - utils.serial_reader - INFO - Successfully opened port /dev/ttyUSB0
+
+2025-09-22 16:47:08,363 - utils.serial_reader - INFO - Successfully opened port /dev/ttyUSB2
+
+2025-09-22 16:47:08,364 - utils.serial_reader - INFO - Successfully opened port /dev/ttyUSB1
+
+2025-09-22 16:47:08,367 - utils.serial_reader - INFO - Successfully opened port /dev/ttyUSB3
+
+2025-09-22 16:47:08,368 - utils.serial_reader - INFO - Successfully opened port /dev/ttyUSB4
+
+2025-09-22 16:47:27,921 - utils.data_processor - INFO - 2025-09-22 16:47:27 - /dev/ttyUSB3: {'type': 'TILT_RAIN', 'station_name': 'GGPA', 'station_type': 1, 'station_number': 11, 'network_id': 1, 'inclinometer': {'radial': -427.5, 'tangential': 296.3, 'temperature': 6.1, 'voltage': 13.7}, 'pluviometer': {'rain_level': 0.0, 'voltage': 13.7}}
+
+2025-09-22 16:47:27,962 - utils.zabbix_sender - INFO - Sent 4 metrics to Zabbix 192.168.1.143:10051 for host GGPA_IN.
+
+2025-09-22 16:47:27,997 - utils.zabbix_sender - INFO - Sent 2 metrics to Zabbix 192.168.1.143:10051 for host GGPA_PL.
+```
+
+Note: To render the screenshot, place an image at `images/console-output.png` in the repository.
 
 ## Feedback
 

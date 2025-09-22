@@ -183,7 +183,16 @@ python -m unittest discover tests
 
 Los encabezados TSV incluyen una línea en blanco después de `IDENTIFICADOR:` antes de la línea de encabezado `FECHA`/`TIEMPO`.
 
-## Feedback
+## Ejemplo de salida en consola
+
+![Salida de Consola](images/console-output.png)
+
+Salida de texto de ejemplo:
+
+```
+(venv) pi@raspi-tilt:~/Documents/Projects/serial-tilt-zbx $ python main.py
+
+2025-09-22 16:47:08,333 - root - INFO -
 
 If you have any feedback, please reach out to us at robertocarlos.toapanta@gmail.com
 
