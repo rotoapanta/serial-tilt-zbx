@@ -43,6 +43,15 @@
             "timeout": 1
         }
     ],
+    "serial_retry": {
+        "max_attempts": 3,
+        "delay_seconds": 5,
+        "on_fail": "disable"
+    },
+    "serial_supervisor": {
+        "auto_reenable": true,
+        "reenable_interval_seconds": 20
+    },
     "zabbix_keys": {
         "inclinometer": {
             "radial": "tilt.radial",
