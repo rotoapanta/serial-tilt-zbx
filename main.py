@@ -18,5 +18,19 @@ if __name__ == "__main__":
     logging.info("==================================================")
     logging.info("    Serial Tiltmeter to Zabbix Application Started    ")
     logging.info("==================================================")
+    # Create shutdown event and register signal handlers for graceful termination
+    stop_event = threading.Event()
+
+    def handle_signal(signum, frame):
+        logging.info(f"Received signal {signum}. Initiating graceful shutdown...")
+        stop_event.set()
+
+    signal.signal(signal.SIGINT, handle_signal)
+    signal.signal(signal.SIGTERM, handle_signal)
+
+    # Run Zabbix preflight checks (binary/connectivity/spool)
+    preflight_check()
+
     logging.info("Starting serial port readers...")
-    start_serial_readers()
+    start_serial_readers(stop_event)
+    logging.info("Serial Tiltmeter to Zabbix Application stopped.")
