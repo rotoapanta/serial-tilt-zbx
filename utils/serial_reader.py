@@ -18,7 +18,7 @@ from config.serial_config import SERIAL_PORTS
 from utils.data_processor import process_data
 
 
-def read_serial_port(port_config):
+def read_serial_port(port_config, stop_event=None):
     """Continuously reads data from a single serial port in an infinite loop.
 
     This function opens a serial port based on the provided configuration.
@@ -32,7 +32,7 @@ def read_serial_port(port_config):
     """
     logger = logging.getLogger(__name__)
     port_name = port_config['port']
-    while True:
+    while stop_event is None or not stop_event.is_set():
         try:
             with serial.Serial(
                 port=port_config["port"],
@@ -43,20 +43,24 @@ def read_serial_port(port_config):
                 timeout=port_config["timeout"],
             ) as ser:
                 logger.info(f"Successfully opened port {port_name}")
-                while True:
+                while stop_event is None or not stop_event.is_set():
                     raw_bytes = ser.readline()
+                    if stop_event and stop_event.is_set():
+                        break
                     if raw_bytes:
                         process_data(raw_bytes, port_name)
         except serial.SerialException as e:
             logger.error(f"Error with port {port_name}: {e}")
             logger.info(f"Retrying to connect to {port_name} in 5 seconds...")
-            time.sleep(5)
+            if stop_event and stop_event.wait(5):
+                break
         except Exception as e:
             logger.critical(f"An unexpected error occurred on port {port_name}: {e}")
             logger.info(f"Retrying to connect to {port_name} in 5 seconds...")
-            time.sleep(5)
+            if stop_event and stop_event.wait(5):
+                break
 
-def start_serial_readers():
+def start_serial_readers(stop_event=None):
     """Initializes and starts a daemon thread for each configured serial port.
 
     This function iterates through the `SERIAL_PORTS` configuration, creating a
@@ -67,15 +71,26 @@ def start_serial_readers():
     logger = logging.getLogger(__name__)
     threads = []
     for port_config in SERIAL_PORTS:
-        thread = threading.Thread(target=read_serial_port, args=(port_config,))
+        thread = threading.Thread(target=read_serial_port, args=(port_config, stop_event,))
         thread.daemon = True  # Daemon threads will exit when the main program exits
         thread.start()
         threads.append(thread)
 
     try:
-        # Keep the main thread alive, allowing daemon threads to run
-        # and to catch KeyboardInterrupt gracefully.
-        for thread in threads:
-            thread.join()
+        if stop_event is None:
+            # Keep the main thread alive, allowing daemon threads to run
+            # and to catch KeyboardInterrupt gracefully.
+            for thread in threads:
+                thread.join()
+        else:
+            # Wait until a stop is requested
+            while not stop_event.is_set():
+                time.sleep(0.5)
     except KeyboardInterrupt:
         logger.info("Stopping serial port readers...")
+        if stop_event is not None:
+            stop_event.set()
+    finally:
+        logger.info("Joining serial port reader threads...")
+        for thread in threads:
+            thread.join(timeout=2)

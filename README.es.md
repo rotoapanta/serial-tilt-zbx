@@ -22,6 +22,8 @@ Este proyecto lee, procesa y envía datos de inclinómetros y pluviómetros desd
 - **Procesamiento de Datos:** Parsea tramas de datos específicas de los sensores.
 - **Integración con Zabbix:** Utiliza `zabbix_sender` para enviar métricas a un servidor Zabbix.
 - **Logging Robusto:** Registra la actividad de la aplicación, incluyendo errores, con rotación de archivos.
+- **Apagado Limpio:** Maneja SIGINT/SIGTERM para detener hilos de forma ordenada.
+- **Almacenamiento Seguro:** Evita condiciones de carrera al escribir archivos TSV.
 - **Configuración Flexible:** Gestiona la configuración de puertos y Zabbix a través de archivos externos.
 - **Instalación Automatizada:** Incluye scripts para facilitar la configuración en Raspberry Pi.
 - **Ejecución como Servicio:** Permite la instalación como un servicio `systemd` para operación continua.
@@ -51,7 +53,7 @@ Esta es la forma recomendada para poner el sistema en producción. Los scripts a
 
 ### 2. Ejecutar el Script de Configuración
 
-- Este script instalará las dependencias del sistema (como `python3-venv` y `zabbix-sender`) y las librerías de Python necesarias.
+- Este script instalará las dependencias del sistema (como `python3-venv` y `zabbix-sender`) y las librerías de Python necesarias. Ejecuta apt en modo no interactivo y actualiza pip/setuptools/wheel antes de instalar los requisitos.
   ```bash
   chmod +x setup_pi.sh
   ./setup_pi.sh
@@ -65,6 +67,23 @@ Esta es la forma recomendada para poner el sistema en producción. Los scripts a
   - `config/zabbix_config.py`: Define la dirección de tu servidor Zabbix.
   - `config/station_mapping.py`: Mapea los IDs de las estaciones a los nombres de host de Zabbix.
 
+### Opcional: Permisos de serie y nombres estables
+
+- Agrega tu usuario al grupo `dialout` y vuelve a iniciar sesión:
+  ```bash
+  sudo usermod -a -G dialout $USER
+  # Cierra sesión y vuelve a iniciarla
+  ```
+- Crea reglas udev para nombres estables:
+  ```bash
+  sudo tee /etc/udev/rules.d/99-serial-names.rules >/dev/null <<'R'
+  SUBSYSTEM=="tty", ATTRS{idVendor}=="067b", ATTRS{idProduct}=="2303", SYMLINK+="ttyUSB_TILT"
+  SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", SYMLINK+="ttyUSB_PLUV"
+  R
+  sudo udevadm control --reload-rules && sudo udevadm trigger
+  ```
+  Luego referencia `/dev/ttyUSB_TILT`, `/dev/ttyUSB_PLUV` en tu configuración.
+
 ### 4. Instalar como un Servicio (Opcional pero Recomendado)
 
 - Para que la aplicación se inicie automáticamente y se mantenga en ejecución, instálala como un servicio `systemd`.
@@ -72,7 +91,15 @@ Esta es la forma recomendada para poner el sistema en producción. Los scripts a
   chmod +x install_service.sh
   ./install_service.sh
   ```
-- El script generará un archivo `.service` y te mostrará los comandos exactos para moverlo, habilitarlo e iniciarlo. Sigue las instrucciones que aparecen en la terminal.
+- El script generará un archivo `.service` y te mostrará los comandos exactos para moverlo, habilitarlo e iniciarlo. Sigue las instrucciones que aparecen en la terminal. La unidad generada usa Type=simple, Restart=on-failure, LimitNOFILE=4096 y soporta un EnvironmentFile opcional en `/etc/default/serial-tilt-zbx`.
+
+  O ejecuta explícitamente estos comandos:
+  ```bash
+  sudo mv $(pwd)/serial-tilt-zbx.service /etc/systemd/system/serial-tilt-zbx.service
+  sudo systemctl daemon-reload
+  sudo systemctl enable serial-tilt-zbx.service
+  sudo systemctl start serial-tilt-zbx.service
+  ```
 
 - **Para gestionar el servicio:**
   - **Ver estado:** `sudo systemctl status serial-tilt-zbx.service`
@@ -104,6 +131,7 @@ Sigue estos pasos para una instalación manual en cualquier sistema Linux.
 
 4. **Instala las dependencias de Python:**
    ```bash
+   pip install --upgrade pip setuptools wheel
    pip install -r requirements.txt
    ```
 
@@ -121,3 +149,7 @@ Para ejecutar las pruebas unitarias, usa el siguiente comando desde el directori
 ```bash
 python -m unittest discover tests
 ```
+
+## Archivos de datos
+
+Los encabezados TSV incluyen una línea en blanco después de `IDENTIFICADOR:` antes de la línea de encabezado `FECHA`/`TIEMPO`.

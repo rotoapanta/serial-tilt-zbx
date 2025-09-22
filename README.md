@@ -21,6 +21,8 @@ This project reads, processes, and sends data from inclinometers and pluviometer
 - **Data Processing:** Parses specific data frames from the sensors.
 - **Zabbix Integration:** Uses `zabbix_sender` to send metrics to a Zabbix server.
 - **Robust Logging:** Logs application activity, including errors, with file rotation.
+- **Graceful Shutdown:** Handles SIGINT/SIGTERM to stop threads cleanly.
+- **Thread-Safe Storage:** Prevents race conditions when writing TSV files.
 - **Flexible Configuration:** Manages port and Zabbix settings through external files.
 - **Automated Setup:** Includes scripts to facilitate setup on a Raspberry Pi.
 - **Service Execution:** Allows installation as a `systemd` service for continuous operation.
@@ -50,7 +52,7 @@ This is the recommended way to deploy the system in a production environment. Th
 
 ### 2. Run the Setup Script
 
-- This script will install system dependencies (like `python3-venv` and `zabbix-sender`) and the necessary Python libraries.
+- This script will install system dependencies (like `python3-venv` and `zabbix-sender`) and the necessary Python libraries. It runs apt non-interactively and upgrades pip/setuptools/wheel before installing requirements.
   ```bash
   chmod +x setup_pi.sh
   ./setup_pi.sh
@@ -64,6 +66,23 @@ This is the recommended way to deploy the system in a production environment. Th
   - `config/zabbix_config.py`: Set your Zabbix server address.
   - `config/station_mapping.py`: Map station IDs to Zabbix host names.
 
+### Optional: Serial permissions and stable device names
+
+- Add your user to the `dialout` group, then log out/in:
+  ```bash
+  sudo usermod -a -G dialout $USER
+  # Log out and back in to apply
+  ```
+- Create udev rules for stable names:
+  ```bash
+  sudo tee /etc/udev/rules.d/99-serial-names.rules >/dev/null <<'R'
+  SUBSYSTEM=="tty", ATTRS{idVendor}=="067b", ATTRS{idProduct}=="2303", SYMLINK+="ttyUSB_TILT"
+  SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", SYMLINK+="ttyUSB_PLUV"
+  R
+  sudo udevadm control --reload-rules && sudo udevadm trigger
+  ```
+  Then reference `/dev/ttyUSB_TILT`, `/dev/ttyUSB_PLUV` in your config.
+
 ### 4. Install as a Service (Optional but Recommended)
 
 - To have the application start automatically and keep running, install it as a `systemd` service.
@@ -71,7 +90,15 @@ This is the recommended way to deploy the system in a production environment. Th
   chmod +x install_service.sh
   ./install_service.sh
   ```
-- The script will generate a `.service` file and show you the exact commands to move, enable, and start it. Follow the instructions in the terminal.
+- The script will generate a `.service` file and show you the exact commands to move, enable, and start it. Follow the instructions in the terminal. The generated unit uses Type=simple, Restart=on-failure, LimitNOFILE=4096, and supports an optional EnvironmentFile at `/etc/default/serial-tilt-zbx`.
+
+  Or run the following commands explicitly:
+  ```bash
+  sudo mv $(pwd)/serial-tilt-zbx.service /etc/systemd/system/serial-tilt-zbx.service
+  sudo systemctl daemon-reload
+  sudo systemctl enable serial-tilt-zbx.service
+  sudo systemctl start serial-tilt-zbx.service
+  ```
 
 - **To manage the service:**
   - **Check status:** `sudo systemctl status serial-tilt-zbx.service`
@@ -103,6 +130,7 @@ Follow these steps for a manual installation on any Linux system.
 
 4. **Install Python dependencies:**
    ```bash
+   pip install --upgrade pip setuptools wheel
    pip install -r requirements.txt
    ```
 
@@ -120,3 +148,7 @@ To run the unit tests, use the following command from the project's root directo
 ```bash
 python -m unittest discover tests
 ```
+
+## Data files
+
+TSV headers include a blank line after `IDENTIFICADOR:` before the `FECHA`/`TIEMPO` header line.

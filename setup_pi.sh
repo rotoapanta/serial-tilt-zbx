@@ -8,7 +8,10 @@ set -e
 echo "--- Iniciando la configuración completa del proyecto Serial Tiltmeter to Zabbix ---"
 
 # 1. Verificar e instalar dependencias del sistema
-echo "[Paso 1/4] Verificando dependencias del sistema (python3, python3-venv, git)..."
+export DEBIAN_FRONTEND=noninteractive
+export APT_LISTCHANGES_FRONTEND=none
+
+echo "[Paso 1/4] Verificando dependencias del sistema (python3, python3-venv, git, zabbix-sender)..."
 
 # Lista de paquetes requeridos
 PACKAGES="python3 python3-venv git zabbix-sender"
@@ -24,8 +27,8 @@ done
 if [ -n "$PACKAGES_TO_INSTALL" ]; then
     echo "   Se instalarán los siguientes paquetes del sistema: $PACKAGES_TO_INSTALL"
     echo "   Se requerirá tu contraseña (sudo) para continuar."
-    sudo apt-get update
-    sudo apt-get install -y $PACKAGES_TO_INSTALL
+    sudo apt-get update -y
+    sudo apt-get install -y --no-install-recommends $PACKAGES_TO_INSTALL
 else
     echo "   Todas las dependencias del sistema ya están instaladas."
 fi
@@ -38,6 +41,7 @@ python3 -m venv venv
 # 3. Instalar dependencias de Python
 echo "[Paso 3/4] Instalando dependencias de Python desde requirements.txt..."
 # Se usa el pip del entorno virtual directamente para evitar problemas
+./venv/bin/pip install --upgrade pip setuptools wheel
 ./venv/bin/pip install -r requirements.txt
 
 # 4. Dar permisos de ejecución al script
@@ -56,6 +60,13 @@ echo ""
 echo "3. Una vez configurado, ejecuta la aplicación con:"
 echo "   python main.py"
 echo ""
-echo "NOTA: Si recibes un error de 'Permission denied' al acceder al puerto serie, ejecuta:"
-echo "sudo usermod -a -G dialout $USER"
-echo "Y luego cierra sesión y vuelve a iniciarla."
+echo "NOTA: Si recibes un error de 'Permission denied' al acceder al puerto serie, agrega tu usuario al grupo 'dialout' y reloguea:"
+echo "   sudo usermod -a -G dialout $USER"
+echo "   # Cierra sesión y vuelve a iniciarla para aplicar el cambio."
+echo ""
+echo "Opcional: Asignar nombres estables a los puertos (udev rules) para evitar cambios de /dev/ttyUSBx. Ejemplo:"
+echo "   sudo tee /etc/udev/rules.d/99-serial-names.rules >/dev/null <<'R'"
+echo "   SUBSYSTEM==\"tty\", ATTRS{idVendor}==\"067b\", ATTRS{idProduct}==\"2303\", SYMLINK+=\"ttyUSB_TILT\""
+echo "   SUBSYSTEM==\"tty\", ATTRS{idVendor}==\"0403\", ATTRS{idProduct}==\"6001\", SYMLINK+=\"ttyUSB_PLUV\""
+echo "   R"
+echo "   sudo udevadm control --reload-rules && sudo udevadm trigger"

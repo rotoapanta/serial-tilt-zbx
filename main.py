@@ -7,8 +7,11 @@ sensors to a Zabbix server.
 """
 
 import logging
+import signal
+import threading
 from utils.logging_config import setup_logging
 from utils.serial_reader import start_serial_readers
+from utils.zabbix_sender import preflight_check
 
 if __name__ == "__main__":
     setup_logging()

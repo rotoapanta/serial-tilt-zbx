@@ -27,16 +27,25 @@ After=network.target
 User=$USER
 Group=$(id -gn $USER)
 
+# Tipo (simple por defecto, lo explicitamos)
+Type=simple
+
 # Directorio de trabajo del script
 WorkingDirectory=$PROJECT_DIR
+
+# Variables desde archivo opcional
+EnvironmentFile=-/etc/default/$SERVICE_NAME
 
 # Comando para iniciar el servicio
 # Usamos el intérprete de Python del entorno virtual
 ExecStart=$PYTHON_EXEC $MAIN_SCRIPT
 
 # Política de reinicio
-Restart=always
+Restart=on-failure
 RestartSec=10s
+
+# Límite de descriptores de archivo
+LimitNOFILE=4096
 
 # Configuración de logging
 StandardOutput=journal
@@ -54,7 +63,7 @@ echo ""
 echo "Por favor, ejecuta los siguientes comandos en tu Raspberry Pi para instalar y iniciar el servicio:"
 echo ""
 echo "1. Mover el archivo de servicio al directorio de systemd:"
-echo -e "   \033[1;33msudo mv ~/$SERVICE_FILE /etc/systemd/system/$SERVICE_FILE\033[0m"
+echo -e "   \033[1;33msudo mv $PROJECT_DIR/$SERVICE_FILE /etc/systemd/system/$SERVICE_FILE\033[0m"
 echo ""
 echo "2. Recargar el demonio de systemd para que reconozca el nuevo servicio:"
 echo -e "   \033[1;33msudo systemctl daemon-reload\033[0m"
