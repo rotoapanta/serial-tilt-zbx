@@ -55,6 +55,7 @@ def save_inclinometer_data(data):
                 f.write(f"TIPO:INCLINOMETRIA\n")
                 f.write(f"NOMBRE:{station_name}\n")
                 f.write(f"IDENTIFICADOR:{station_number}\n")
+                f.write("\n")
                 f.write("FECHA\tTIEMPO\tX RADIAL\tY TANGENCIAL\tTEMPERATURA\tBATERIA\n")
                 f.write("\t\tmicro radianes\tmicro radianes\tgrados centigrados\tvoltios\n")
             
@@ -99,6 +100,7 @@ def save_pluviometer_data(data):
                 f.write(f"TIPO:PLUVIOMETRIA\n")
                 f.write(f"NOMBRE:{station_name}\n")
                 f.write(f"IDENTIFICADOR:{station_number}\n")
+                f.write("\n")
                 f.write("FECHA\tTIEMPO\tNIVEL\tBATERIA\n")
                 f.write("\t\tmilimetros\tvoltios\n")
             
