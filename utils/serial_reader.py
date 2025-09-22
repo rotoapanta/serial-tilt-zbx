@@ -1,12 +1,19 @@
-"""Handles the concurrent reading of multiple serial ports.
+"""Concurrent serial port readers with retry limits and auto re-enable.
 
-This module is responsible for:
-- Creating and managing a separate thread for each serial port defined in the
-  configuration.
-- Continuously reading data from each port.
-- Handling serial port errors (e.g., disconnection) and attempting to
-  reconnect automatically.
-- Passing the raw data read from the port to the data processor.
+This module:
+- Creates a thread per serial port from configuration.
+- Reads data continuously and passes raw bytes to the data processor.
+- Handles errors with a configurable retry policy (global and per-port):
+  - max attempts, delay between attempts, and on-fail action
+    (keep retrying | disable thread | stop app).
+- Maintains a supervisor that probes disabled ports periodically and
+  re-enables them when available.
+
+Configuration (config.json):
+- serial_ports: list of port dicts (port, baudrate, bytesize, parity, stopbits, timeout).
+  Optional per-port overrides: max_retries, retry_delay, on_fail.
+- serial_retry: { max_attempts, delay_seconds, on_fail } defaults for retries.
+- serial_supervisor: { auto_reenable, reenable_interval_seconds } controls the supervisor.
 """
 
 import logging
@@ -36,16 +43,27 @@ def _mark_port_disabled(port_config, reason: str = "") -> None:
 
 
 def read_serial_port(port_config, stop_event=None):
-    """Continuously reads data from a single serial port in an infinite loop.
+    """Read from a single serial port in a loop with configurable retries.
 
-    This function opens a serial port based on the provided configuration.
-    It reads data line by line and passes it to `process_data`. If the port
-    cannot be opened or an error occurs during reading, it logs the error
-    and attempts to reconnect after a short delay.
+    Opens the port, reads line-by-line, and dispatches to `process_data`.
+    On open/read error, applies retry policy derived from:
+    - Per-port overrides in `port_config`: max_retries, retry_delay, on_fail.
+    - Global defaults in `APP_CONFIG['serial_retry']` when overrides are absent.
+
+    Behavior:
+    - Attempts counter resets after a successful open.
+    - on_fail:
+      - 'keep_retrying': continue retrying indefinitely after reaching max.
+      - 'disable'/'disable_thread'/'stop_thread': mark port disabled and exit this thread.
+      - 'stop_app'/'exit_app'/'exit': signal graceful app shutdown (or exit if no stop_event).
+    - Disabled ports are tracked for possible re-enabling by the supervisor.
 
     Args:
-        port_config (dict): A dictionary containing the configuration for the
-                            serial port (e.g., 'port', 'baudrate').
+        port_config (dict): Serial parameters; may include retry overrides.
+        stop_event (threading.Event | None): Optional shared stop signal.
+
+    Returns:
+        None
     """
     logger = logging.getLogger(__name__)
     port_name = port_config['port']
@@ -129,12 +147,17 @@ def read_serial_port(port_config, stop_event=None):
                 break
 
 def start_serial_readers(stop_event=None):
-    """Initializes and starts a daemon thread for each configured serial port.
+    """Start reader threads for all configured ports and the supervisor.
 
-    This function iterates through the `SERIAL_PORTS` configuration, creating a
-    separate thread for each port that targets the `read_serial_port` function.
-    It then keeps the main thread alive by joining the threads, allowing the
-    program to run indefinitely until interrupted (e.g., with Ctrl+C).
+    - Spawns a daemon thread per entry in `SERIAL_PORTS` running `read_serial_port`.
+    - Starts a supervisor daemon that periodically attempts to reopen ports
+      that were disabled after exceeding retry limits.
+
+    Supervisor configuration via `APP_CONFIG['serial_supervisor']`:
+    - auto_reenable (bool, default True): enable/disable automatic re-enabling.
+    - reenable_interval_seconds (int, default 30): probe interval in seconds.
+
+    Keeps the process alive until `stop_event` is set or a KeyboardInterrupt occurs.
     """
     logger = logging.getLogger(__name__)
     threads = []

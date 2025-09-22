@@ -26,6 +26,7 @@ This project reads, processes, and sends data from inclinometers and pluviometer
 - **Flexible Configuration:** Manages port and Zabbix settings through external files.
 - **Automated Setup:** Includes scripts to facilitate setup on a Raspberry Pi.
 - **Service Execution:** Allows installation as a `systemd` service for continuous operation.
+- **Serial Port Resilience:** Configurable retry policy per port and an auto re-enable supervisor when ports recover.
 
 ## System Requirements
 
@@ -62,7 +63,7 @@ This is the recommended way to deploy the system in a production environment. Th
 ### 3. Configure the Application
 
 - **VERY IMPORTANT!** Edit the configuration files to match your hardware and server.
-  - `config/serial_config.py`: Adjust the serial port names (e.g., `/dev/ttyUSB0`).
+  - `config.json`: Define `serial_ports` and (optionally) retry/supervisor settings under `serial_retry` and `serial_supervisor`.
   - `config/zabbix_config.py`: Set your Zabbix server address.
   - `config/station_mapping.py`: Map station IDs to Zabbix host names.
 
@@ -141,6 +142,34 @@ Follow these steps for a manual installation on any Linux system.
      python main.py
      ```
 
+## Serial retry and supervisor configuration
+
+- Global defaults in `config.json`:
+  - `serial_retry`: `{ "max_attempts": 3, "delay_seconds": 5, "on_fail": "disable" }`
+  - `serial_supervisor`: `{ "auto_reenable": true, "reenable_interval_seconds": 20 }`
+- Per-port overrides: add `max_retries`, `retry_delay`, `on_fail` inside a specific `serial_ports` entry.
+- Behavior:
+  - After `max_attempts` failures: `on_fail` determines whether to keep retrying, disable the port thread, or stop the app.
+  - Disabled ports are probed by the supervisor and re-enabled automatically when available.
+
+Example snippet from `config.json`:
+
+```json
+{
+  "serial_ports": [
+    { "port": "/dev/ttyUSB0", "baudrate": 9600, "bytesize": 8, "parity": "N", "stopbits": 1, "timeout": 1 },
+    { "port": "/dev/ttyUSB4", "baudrate": 9600, "bytesize": 8, "parity": "N", "stopbits": 1, "timeout": 1,
+      "max_retries": 3, "retry_delay": 5, "on_fail": "disable" }
+  ],
+  "serial_retry": { "max_attempts": 3, "delay_seconds": 5, "on_fail": "disable" },
+  "serial_supervisor": { "auto_reenable": true, "reenable_interval_seconds": 20 }
+}
+```
+
+Notes:
+- Changes to `config.json` apply after restarting the application.
+- Logs will show when a port is disabled and when it is re-enabled by the supervisor.
+
 ## Testing
 
 To run the unit tests, use the following command from the project's root directory:
@@ -152,3 +181,29 @@ python -m unittest discover tests
 ## Data files
 
 TSV headers include a blank line after `IDENTIFICADOR:` before the `FECHA`/`TIEMPO` header line.
+
+## Feedback
+
+If you have any feedback, please reach out to us at robertocarlos.toapanta@gmail.com
+
+## Support
+
+For support, email robertocarlos.toapanta@gmail.com or join our Discord channel.
+
+## License
+
+[GPL v2](https://www.gnu.org/licenses/gpl-2.0)
+
+## Authors
+
+- [@rotoapanta](https://github.com/rotoapanta)
+
+## More Info
+
+* [Cómo usar Rsync para sincronizar directorios locales y remotos](https://www.digitalocean.com/community/tutorials/how-to-use-rsync-to-sync-local-and-remote-directories-es)
+
+## Links
+
+[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/roberto-carlos-toapanta-g/)
+
+[![twitter](https://img.shields.io/badge/twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/rotoapanta)

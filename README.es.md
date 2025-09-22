@@ -27,6 +27,7 @@ Este proyecto lee, procesa y envía datos de inclinómetros y pluviómetros desd
 - **Configuración Flexible:** Gestiona la configuración de puertos y Zabbix a través de archivos externos.
 - **Instalación Automatizada:** Incluye scripts para facilitar la configuración en Raspberry Pi.
 - **Ejecución como Servicio:** Permite la instalación como un servicio `systemd` para operación continua.
+- **Resiliencia de Puertos Serie:** Política de reintentos configurable por puerto y un supervisor que re-habilita puertos cuando se recuperan.
 
 ## Requisitos del Sistema
 
@@ -63,7 +64,7 @@ Esta es la forma recomendada para poner el sistema en producción. Los scripts a
 ### 3. Configurar la Aplicación
 
 - **¡MUY IMPORTANTE!** Edita los archivos de configuración para que coincidan con tu hardware y servidor.
-  - `config/serial_config.py`: Ajusta el nombre de los puertos serie (ej. `/dev/ttyUSB0`).
+  - `config.json`: Define `serial_ports` y (opcionalmente) los ajustes de reintento/supervisor bajo `serial_retry` y `serial_supervisor`.
   - `config/zabbix_config.py`: Define la dirección de tu servidor Zabbix.
   - `config/station_mapping.py`: Mapea los IDs de las estaciones a los nombres de host de Zabbix.
 
@@ -142,6 +143,34 @@ Sigue estos pasos para una instalación manual en cualquier sistema Linux.
      python main.py
      ```
 
+## Configuración de reintentos y supervisor de serie
+
+- Valores globales en `config.json`:
+  - `serial_retry`: `{ "max_attempts": 3, "delay_seconds": 5, "on_fail": "disable" }`
+  - `serial_supervisor`: `{ "auto_reenable": true, "reenable_interval_seconds": 20 }`
+- Overrides por puerto: añade `max_retries`, `retry_delay`, `on_fail` dentro de una entrada específica en `serial_ports`.
+- Comportamiento:
+  - Tras `max_attempts` fallos: `on_fail` define si continuar reintentando, deshabilitar el hilo del puerto o detener la app.
+  - Los puertos deshabilitados son sondeados por el supervisor y se re-habilitan automáticamente cuando estén disponibles.
+
+Ejemplo de `config.json`:
+
+```json
+{
+  "serial_ports": [
+    { "port": "/dev/ttyUSB0", "baudrate": 9600, "bytesize": 8, "parity": "N", "stopbits": 1, "timeout": 1 },
+    { "port": "/dev/ttyUSB4", "baudrate": 9600, "bytesize": 8, "parity": "N", "stopbits": 1, "timeout": 1,
+      "max_retries": 3, "retry_delay": 5, "on_fail": "disable" }
+  ],
+  "serial_retry": { "max_attempts": 3, "delay_seconds": 5, "on_fail": "disable" },
+  "serial_supervisor": { "auto_reenable": true, "reenable_interval_seconds": 20 }
+}
+```
+
+Notas:
+- Los cambios en `config.json` se aplican tras reiniciar la aplicación.
+- Los logs mostrarán cuando un puerto se deshabilita y cuando es re-habilitado por el supervisor.
+
 ## Pruebas
 
 Para ejecutar las pruebas unitarias, usa el siguiente comando desde el directorio raíz del proyecto:
@@ -153,3 +182,29 @@ python -m unittest discover tests
 ## Archivos de datos
 
 Los encabezados TSV incluyen una línea en blanco después de `IDENTIFICADOR:` antes de la línea de encabezado `FECHA`/`TIEMPO`.
+
+## Feedback
+
+If you have any feedback, please reach out to us at robertocarlos.toapanta@gmail.com
+
+## Support
+
+For support, email robertocarlos.toapanta@gmail.com or join our Discord channel.
+
+## License
+
+[GPL v2](https://www.gnu.org/licenses/gpl-2.0)
+
+## Authors
+
+- [@rotoapanta](https://github.com/rotoapanta)
+
+## More Info
+
+* [Cómo usar Rsync para sincronizar directorios locales y remotos](https://www.digitalocean.com/community/tutorials/how-to-use-rsync-to-sync-local-and-remote-directories-es)
+
+## Links
+
+[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/roberto-carlos-toapanta-g/)
+
+[![twitter](https://img.shields.io/badge/twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/rotoapanta)

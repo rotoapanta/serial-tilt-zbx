@@ -147,6 +147,11 @@ def _send_lines_batch(lines: List[str], allow_spool_on_fail: bool = True) -> boo
 
         ok = _run_sender_with_retries(tmp_file, opts["verbose"], opts["timeout"], opts["retries"])
         if ok:
+            # Success: log a concise confirmation
+            try:
+                logger.info(f"Sent {len(lines)} metrics to Zabbix {ZABBIX_SERVER}:{ZABBIX_PORT}.")
+            except Exception:
+                pass
             # On success, try drain spool as well
             try:
                 drain_spool()
