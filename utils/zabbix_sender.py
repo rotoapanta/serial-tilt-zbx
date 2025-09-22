@@ -147,11 +147,21 @@ def _send_lines_batch(lines: List[str], allow_spool_on_fail: bool = True) -> boo
 
         ok = _run_sender_with_retries(tmp_file, opts["verbose"], opts["timeout"], opts["retries"])
         if ok:
-            # Success: log a concise confirmation
+            # Success: log a concise confirmation (include host(s))
             try:
-                logger.info(f"Sent {len(lines)} metrics to Zabbix {ZABBIX_SERVER}:{ZABBIX_PORT}.")
+                hosts = sorted({ln.split()[0] for ln in lines if ln.strip()})
+                if len(hosts) == 1:
+                    logger.info(
+                        f"Sent {len(lines)} metrics to Zabbix {ZABBIX_SERVER}:{ZABBIX_PORT} for host {hosts[0]}."
+                    )
+                else:
+                    preview = ", ".join(hosts[:3])
+                    suffix = "..." if len(hosts) > 3 else ""
+                    logger.info(
+                        f"Sent {len(lines)} metrics to Zabbix {ZABBIX_SERVER}:{ZABBIX_PORT} for {len(hosts)} hosts ({preview}{suffix})."
+                    )
             except Exception:
-                pass
+                logger.info(f"Sent {len(lines)} metrics to Zabbix {ZABBIX_SERVER}:{ZABBIX_PORT}.")
             # On success, try drain spool as well
             try:
                 drain_spool()
