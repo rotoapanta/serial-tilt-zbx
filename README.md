@@ -260,7 +260,25 @@ For support, email robertocarlos.toapanta@gmail.com or join our Discord channel.
 
 ## More Info
 
-* [Cómo usar Rsync para sincronizar directorios locales y remotos](https://www.digitalocean.com/community/tutorials/how-to-use-rsync-to-sync-local-and-remote-directories-es)
+- Zabbix sender utility: https://www.zabbix.com/documentation/current/en/manual/concepts/sender
+- Zabbix trapper items: https://www.zabbix.com/documentation/current/en/manual/config/items/itemtypes/trapper
+- PySerial (serial communication): https://pyserial.readthedocs.io/en/latest/pyserial.html
+- systemd services: https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html
+- udev rules (persistent device names): https://wiki.archlinux.org/title/Udev
+- Python logging cookbook: https://docs.python.org/3/howto/logging-cookbook.html
+- Python virtual environments (venv): https://docs.python.org/3/library/venv.html
+- unittest framework: https://docs.python.org/3/library/unittest.html
+
+## Zabbix templates and host linking
+
+- Import the templates from the templates/ directory:
+  - templates/zbx_export_templates_inclinometro.yaml
+  - templates/zbx_export_templates_pluviometro.yaml
+- Link the appropriate template to the host as shown below.
+
+![Zabbix: link template to host](images/zabbix-host-template.png)
+
+Note: Place the screenshot at images/zabbix-host-template.png in this repository so it renders on GitHub.
 
 ## Links
 

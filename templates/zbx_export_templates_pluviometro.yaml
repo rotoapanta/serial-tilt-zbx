@@ -1,0 +1,47 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: 7df96b18c230490a9a0a9e2307226338
+      name: Templates
+  templates:
+    - uuid: 326d8b89ca7744be866d0969fd52ea64
+      template: Pluviometro
+      name: Pluviometro
+      groups:
+        - name: Templates
+      items:
+        - uuid: ea52ae1f7ec848e7884bec4c794194ca
+          name: 'Nivel de Lluvia'
+          type: TRAP
+          key: rain.level
+          delay: '0'
+          value_type: FLOAT
+        - uuid: b0fed68384d34bc48835243e587a3c90
+          name: Voltaje
+          type: TRAP
+          key: rain.vbat
+          delay: '0'
+          value_type: FLOAT
+  graphs:
+    - uuid: f3fac48550d24cfbbe492ae50d0d5902
+      name: 'Nivel de Lluvia'
+      graph_items:
+        - drawtype: GRADIENT_LINE
+          color: 0080FF
+          calc_fnc: ALL
+          item:
+            host: Pluviometro
+            key: rain.level
+    - uuid: 584e73cdf7ab474f9610fea53a0d2194
+      name: Voltaje
+      yaxismax: '0'
+      show_work_period: 'NO'
+      show_triggers: 'NO'
+      type: PIE
+      show_3d: 'YES'
+      graph_items:
+        - color: CE93D8
+          calc_fnc: MIN
+          item:
+            host: Pluviometro
+            key: rain.vbat

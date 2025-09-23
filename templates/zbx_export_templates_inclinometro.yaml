@@ -1,0 +1,73 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: 7df96b18c230490a9a0a9e2307226338
+      name: Templates
+  templates:
+    - uuid: 072433ae78b04dcb985614a72d0e2849
+      template: Inclinometro
+      name: Inclinometro
+      groups:
+        - name: Templates
+      items:
+        - uuid: a4703e61656741508090ac2f198a99f8
+          name: 'Eje Radial'
+          type: TRAP
+          key: tilt.radial
+          delay: '0'
+          value_type: FLOAT
+        - uuid: 3635a32df04a49fbae1178705cc8dd85
+          name: 'Eje Tangencial'
+          type: TRAP
+          key: tilt.tangential
+          delay: '0'
+          value_type: FLOAT
+        - uuid: 5723942a16d24e639c0404af0f6fd008
+          name: Temperatura
+          type: TRAP
+          key: tilt.temp
+          delay: '0'
+          value_type: FLOAT
+        - uuid: a5f3391ceeb04f5da648d56f59873cce
+          name: Voltaje
+          type: TRAP
+          key: tilt.vbat
+          delay: '0'
+          value_type: FLOAT
+  graphs:
+    - uuid: 9580d2a42e244d0fbb179dcdf2cc634c
+      name: Radial
+      graph_items:
+        - drawtype: GRADIENT_LINE
+          color: 80CBC4
+          calc_fnc: ALL
+          item:
+            host: Inclinometro
+            key: tilt.radial
+    - uuid: ca425be01f3547fd896d7f9ed6a050e1
+      name: Tangencial
+      graph_items:
+        - drawtype: GRADIENT_LINE
+          color: 81C784
+          calc_fnc: ALL
+          item:
+            host: Inclinometro
+            key: tilt.tangential
+    - uuid: 01a7b011168f40ac9aae98bb37dc3430
+      name: Temperatura
+      graph_items:
+        - drawtype: GRADIENT_LINE
+          color: FFCA28
+          calc_fnc: ALL
+          item:
+            host: Inclinometro
+            key: tilt.temp
+    - uuid: 19011fa345d243a385d49d6c306f59d0
+      name: Voltaje
+      graph_items:
+        - drawtype: GRADIENT_LINE
+          color: 1A7C11
+          calc_fnc: ALL
+          item:
+            host: Inclinometro
+            key: tilt.vbat
