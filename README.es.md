@@ -4,11 +4,11 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/rotoapanta/serial-tilt-zbx)
 [![Discord Invite](https://img.shields.io/badge/discord-join%20now-green)](https://discord.gg/bf6rWDbJ) 
 [![Docker](https://img.shields.io/badge/Docker-No-brightgreen)](https://www.docker.com/) 
-[![Linux](https://img.shields.io/badge/Linux-Supported-brightgreen)](https://www.linux.org/) 
+[![Linux](https://img.shields.io/badge/Linux-Supported-brightgreen)](https://www.linux.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Author](https://img.shields.io/badge/Roberto%20-Toapanta-brightgreen)](https://www.linkedin.com/in/roberto-carlos-toapanta-g/) 
 [![Version](https://img.shields.io/badge/Version-1.0.0-brightgreen)](#change-log) 
-![GitHub forks](https://img.shields.io/github/forks/rotoapanta/raspberry-api?style=social) 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+![GitHub forks](https://img.shields.io/github/forks/rotoapanta/serial-tilt-zbx?style=social) 
 
 # <p align="center">Serial Tiltmeter to Zabbix</p>
 
