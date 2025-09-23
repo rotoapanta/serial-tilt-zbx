@@ -177,10 +177,6 @@ To run the unit tests, use the following command from the project's root directo
 python -m unittest discover tests
 ```
 
-## Data files
-
-TSV headers include a blank line after `IDENTIFICADOR:` before the `FECHA`/`TIEMPO` header line.
-
 ## Console output example
 
 ![Console Output](images/console-output.png)

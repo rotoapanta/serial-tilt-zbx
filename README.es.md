@@ -177,10 +177,6 @@ Para ejecutar las pruebas unitarias, usa el siguiente comando desde el directori
 python -m unittest discover tests
 ```
 
-## Archivos de datos
-
-Los encabezados TSV incluyen una línea en blanco después de `IDENTIFICADOR:` antes de la línea de encabezado `FECHA`/`TIEMPO`.
-
 ## Ejemplo de salida en consola
 
 ![Salida de Consola](images/console-output.png)
