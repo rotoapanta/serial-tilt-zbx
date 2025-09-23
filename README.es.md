@@ -278,7 +278,7 @@ Para soporte, escribe a robertocarlos.toapanta@gmail.com o únete a nuestro cana
 
 ![Zabbix: vincular template al host](images/zabbix-host-template.png)
 
-Nota: Coloca la captura en images/zabbix-host-template.png dentro del repositorio para que se renderice en GitHub.
+<sub>Figura N.01: Pantalla de configuración del host en Zabbix mostrando cómo vincular el template "Inclinómetro" a un host y asignar el grupo de hosts.</sub>
 
 ## Enlaces
 
