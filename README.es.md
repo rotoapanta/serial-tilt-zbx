@@ -36,6 +36,35 @@ Este proyecto está diseñado para sistemas operativos basados en Debian (como R
 - git (para clonar el repositorio)
 - zabbix-sender (para enviar datos a Zabbix)
 
+## Estructura del proyecto
+
+```
+serial-tilt-zbx/
+├── config/
+│   ├── app_config.py
+│   ├── serial_config.py
+│   ├── station_mapping.py
+│   └── zabbix_config.py
+├── parsers/
+│   └── data_parser.py
+├── tests/
+│   └── test_data_parser.py
+├── utils/
+│   ├── data_processor.py
+│   ├── data_storage.py
+│   ├── logging_config.py
+│   ├── serial_reader.py
+│   └── zabbix_sender.py
+├── .gitignore
+├── config.json
+├── install_service.sh
+├── main.py
+├── README.es.md
+├── README.md
+├── requirements.txt
+└── setup_pi.sh
+```
+
 ---
 
 ## Implementación en Raspberry Pi (Recomendado)
@@ -175,37 +204,6 @@ Para ejecutar las pruebas unitarias, usa el siguiente comando desde el directori
 
 ```bash
 python -m unittest discover tests
-```
-
-## Estructura del proyecto
-
-```
-serial-tilt-zbx/
-├── config/
-│   ├── app_config.py
-│   ├── serial_config.py
-│   ├── station_mapping.py
-│   └── zabbix_config.py
-├── images/
-│   └── console-output.png
-├── parsers/
-│   └── data_parser.py
-├── tests/
-│   └── test_data_parser.py
-├── utils/
-│   ├── data_processor.py
-│   ├── data_storage.py
-│   ├── logging_config.py
-│   ├── serial_reader.py
-│   └── zabbix_sender.py
-├── .gitignore
-├── config.json
-├── install_service.sh
-├── main.py
-├── README.es.md
-├── README.md
-├── requirements.txt
-└── setup_pi.sh
 ```
 
 ## Ejemplo de salida en consola
