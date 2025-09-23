@@ -177,6 +177,37 @@ To run the unit tests, use the following command from the project's root directo
 python -m unittest discover tests
 ```
 
+## Project Structure
+
+```
+serial-tilt-zbx/
+├── config/
+│   ├── app_config.py
+│   ├── serial_config.py
+│   ├── station_mapping.py
+│   └── zabbix_config.py
+├── images/
+│   └── console-output.png
+├── parsers/
+│   └── data_parser.py
+├── tests/
+│   └── test_data_parser.py
+├── utils/
+│   ├── data_processor.py
+│   ├── data_storage.py
+│   ├── logging_config.py
+│   ├── serial_reader.py
+│   └── zabbix_sender.py
+├── .gitignore
+├── config.json
+├── install_service.sh
+├── main.py
+├── README.es.md
+├── README.md
+├── requirements.txt
+└── setup_pi.sh
+```
+
 ## Console output example
 
 ```
@@ -207,7 +238,7 @@ For support, email robertocarlos.toapanta@gmail.com or join our Discord channel.
 
 ## License
 
-[GPL v2](https://www.gnu.org/licenses/gpl-2.0)
+[MIT](https://opensource.org/licenses/MIT)
 
 ## Authors
 
