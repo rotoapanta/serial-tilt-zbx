@@ -46,7 +46,7 @@ This is the recommended way to deploy the system in a production environment. Th
 
 - Clone this repository to your Raspberry Pi:
   ```bash
-  git clone https://github.com/your-user/serial-tilt-zbx.git
+  git clone https://github.com/rotoapanta/serial-tilt-zbx.git
   cd serial-tilt-zbx
   ```
 
@@ -112,7 +112,7 @@ Follow these steps for a manual installation on any Linux system.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-user/serial-tilt-zbx.git
+   git clone https://github.com/rotoapanta/serial-tilt-zbx.git
    cd serial-tilt-zbx
    ```
 
@@ -189,33 +189,19 @@ Example text output:
 
 ```
 (venv) pi@raspi-tilt:~/Documents/Projects/serial-tilt-zbx $ python main.py
-
 2025-09-22 16:47:08,333 - root - INFO - ==================================================
-
 2025-09-22 16:47:08,334 - root - INFO - Serial Tiltmeter to Zabbix Application Started
-
 2025-09-22 16:47:08,335 - root - INFO - ==================================================
-
 2025-09-22 16:47:08,336 - utils.zabbix_sender - INFO - zabbix_sender binary found.
-
 2025-09-22 16:47:08,349 - utils.zabbix_sender - INFO - Connectivity to Zabbix 192.168.1.143:10051 OK.
-
 2025-09-22 16:47:08,350 - root - INFO - Starting serial port readers...
-
 2025-09-22 16:47:08,361 - utils.serial_reader - INFO - Successfully opened port /dev/ttyUSB0
-
 2025-09-22 16:47:08,363 - utils.serial_reader - INFO - Successfully opened port /dev/ttyUSB2
-
 2025-09-22 16:47:08,364 - utils.serial_reader - INFO - Successfully opened port /dev/ttyUSB1
-
 2025-09-22 16:47:08,367 - utils.serial_reader - INFO - Successfully opened port /dev/ttyUSB3
-
 2025-09-22 16:47:08,368 - utils.serial_reader - INFO - Successfully opened port /dev/ttyUSB4
-
 2025-09-22 16:47:27,921 - utils.data_processor - INFO - 2025-09-22 16:47:27 - /dev/ttyUSB3: {'type': 'TILT_RAIN', 'station_name': 'GGPA', 'station_type': 1, 'station_number': 11, 'network_id': 1, 'inclinometer': {'radial': -427.5, 'tangential': 296.3, 'temperature': 6.1, 'voltage': 13.7}, 'pluviometer': {'rain_level': 0.0, 'voltage': 13.7}}
-
 2025-09-22 16:47:27,962 - utils.zabbix_sender - INFO - Sent 4 metrics to Zabbix 192.168.1.143:10051 for host GGPA_IN.
-
 2025-09-22 16:47:27,997 - utils.zabbix_sender - INFO - Sent 2 metrics to Zabbix 192.168.1.143:10051 for host GGPA_PL.
 ```
 
