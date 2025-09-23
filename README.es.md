@@ -176,18 +176,41 @@ Sigue estos pasos para una instalación manual en cualquier sistema Linux.
      python main.py
      ```
 
-## Plantillas de Zabbix y enlace con el host
+## Integración con Zabbix
 
-- Importa los templates desde el directorio templates/:
-  - templates/zbx_export_templates_inclinometro.yaml
-  - templates/zbx_export_templates_pluviometro.yaml
-- Vincula el template apropiado al host como se muestra a continuación.
+- Requisitos
+  - Zabbix Server/Proxy (compatible con los templates) y zabbix-sender instalado en la máquina donde corre esta app.
+  - El host debe existir en Zabbix con el mismo nombre que usa la app (ver station_mapping.py).
+- Prueba de conectividad (diagnóstico)
+  ```bash
+  zabbix_sender -z <IP_ZABBIX> -p 10051 -s <NOMBRE_HOST> -k test.ping -o 1 -vv
+  ```
+  - Si falla, verifica firewall ( TCP/10051 ), conectividad y que el host exista.
+- Convenciones de host y mapeo
+  - Sufijos recomendados: <ESTACION>_IN (inclinómetro), <ESTACION>_PL (pluviómetro).
+  - Mantén config/station_mapping.py alineado con los nombres de host en Zabbix.
+- Claves de ítems esperadas
+  - Inclinómetro: inclinometro.radial, inclinometro.tangencial, inclinometro.temperature, inclinometro.voltage
+  - Pluviómetro:  pluviometro.rain_level, pluviometro.voltage
+- Plantillas e integración con el host
+  - Importa los templates desde templates/:
+    - templates/zbx_export_templates_inclinometro.yaml
+    - templates/zbx_export_templates_pluviometro.yaml
+  - Vincula el template al host correspondiente:
 
 <p align="center">
   <img src="images/zabbix-host-template.png" alt="Zabbix: vincular template al host" width="700">
 </p>
 
-<sub>Figura N.01: Pantalla de configuración del host en Zabbix mostrando cómo vincular el template "Inclinómetro" a un host y asignar el grupo de hosts.</sub>
+<sub>Figura 1: Pantalla de configuración del host en Zabbix mostrando cómo vincular el template "Inclinómetro" a un host y asignar el grupo de hosts.</sub>
+
+- Verificación
+  - Monitoring → Latest data: confirma que llegan valores.
+  - Monitoring → Queue: asegúrate de que no haya retrasos.
+  - Items: evita estado "Unsupported" (las claves deben coincidir exactamente).
+- Troubleshooting
+  - Confirma que el puerto 10051 está abierto, el nombre del host coincide exactamente y el tiempo del sistema está sincronizado (NTP).
+  - Usa zabbix_sender con -vv para mensajes de transporte detallados.
 
 ## Configuración de reintentos y supervisor de serie
 

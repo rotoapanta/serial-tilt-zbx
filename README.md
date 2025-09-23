@@ -175,19 +175,42 @@ Follow these steps for a manual installation on any Linux system.
      ```bash
      python main.py
      ```
+     
+## Zabbix integration
 
-## Zabbix templates and host linking
-
-- Import the templates from the templates/ directory:
-  - templates/zbx_export_templates_inclinometro.yaml
-  - templates/zbx_export_templates_pluviometro.yaml
-- Link the appropriate template to the host as shown below.
+- Requirements
+  - Zabbix Server/Proxy (compatible with your templates) and zabbix-sender installed on the machine running this app.
+  - The host must exist in Zabbix with the exact name used by the app (see station_mapping.py).
+- Connectivity test (diagnostic)
+  ```bash
+  zabbix_sender -z <ZABBIX_IP> -p 10051 -s <HOST_NAME> -k test.ping -o 1 -vv
+  ```
+  - If it fails, check firewall ( TCP/10051 ), network reachability, and that the host exists.
+- Host naming and mapping
+  - Recommended suffixes: <STATION>_IN (inclinometer), <STATION>_PL (pluviometer).
+  - Keep config/station_mapping.py aligned with host names in Zabbix.
+- Expected item keys
+  - Inclinometer: inclinometro.radial, inclinometro.tangencial, inclinometro.temperature, inclinometro.voltage
+  - Pluviometer:  pluviometro.rain_level, pluviometro.voltage
+- Templates and host linking
+  - Import templates from templates/:
+    - templates/zbx_export_templates_inclinometro.yaml
+    - templates/zbx_export_templates_pluviometro.yaml
+  - Link the template to the corresponding host:
 
 <p align="center">
   <img src="images/zabbix-host-template.png" alt="Zabbix: link template to host" width="700">
 </p>
 
 <sub>Figure 1: Zabbix Host configuration screen showing how to link the "Inclinometer" template to a host and assign the host group.</sub>
+
+- Verification
+  - Monitoring → Latest data: confirm new values arrive.
+  - Monitoring → Queue: ensure there are no delays.
+  - Items: ensure no "Unsupported" status (keys must match exactly).
+- Troubleshooting
+  - Confirm port 10051 is open, host name matches exactly, and system time is synchronized (NTP).
+  - Use zabbix_sender with -vv for verbose transport errors.
 
 ## Serial retry and supervisor configuration
 
