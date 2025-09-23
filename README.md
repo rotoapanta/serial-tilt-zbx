@@ -242,6 +242,22 @@ For support, email robertocarlos.toapanta@gmail.com or join our Discord channel.
 
 - [@rotoapanta](https://github.com/rotoapanta)
 
+## Change log
+
+[Unreleased]
+- Added
+  - Project Structure section placed after "System Requirements".
+- Changed
+  - License updated to MIT.
+  - README.es.md synchronized with README.md.
+  - Minor structure/wording adjustments in README files.
+- Fixed
+  - Removed a minor encoding artifact in README.
+
+1.0.0 – 2025-09-22
+- Added
+  - Initial release: concurrent serial reading, sensor frame parsing (inclinometer and pluviometer), Zabbix sender integration, robust logging with rotation, graceful shutdown, thread-safe TSV storage, externalized configuration, Raspberry Pi setup scripts, optional systemd service, serial retry/supervisor, and basic unit tests for the parser.
+
 ## More Info
 
 * [Cómo usar Rsync para sincronizar directorios locales y remotos](https://www.digitalocean.com/community/tutorials/how-to-use-rsync-to-sync-local-and-remote-directories-es)
