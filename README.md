@@ -45,8 +45,14 @@ serial-tilt-zbx/
 │   ├── serial_config.py
 │   ├── station_mapping.py
 │   └── zabbix_config.py
+├── images/
+│   └── zabbix-host-template.png
 ├── parsers/
 │   └── data_parser.py
+├── templates/
+│   ├── README.md
+│   ├── zbx_export_templates_inclinometro.yaml
+│   └── zbx_export_templates_pluviometro.yaml
 ├── tests/
 │   └── test_data_parser.py
 ├── utils/
@@ -280,7 +286,7 @@ For support, email robertocarlos.toapanta@gmail.com or join our Discord channel.
   <img src="images/zabbix-host-template.png" alt="Zabbix: link template to host" width="700">
 </p>
 
-<sub>Figura N.01: Zabbix Host configuration screen showing how to link the "Inclinometer" template to a host and assign the host group.</sub>
+<sub>Figure 1: Zabbix Host configuration screen showing how to link the "Inclinometer" template to a host and assign the host group.</sub>
 
 ## Links
 

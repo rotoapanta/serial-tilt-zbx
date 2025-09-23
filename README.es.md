@@ -45,8 +45,14 @@ serial-tilt-zbx/
 │   ├── serial_config.py
 │   ├── station_mapping.py
 │   └── zabbix_config.py
+├── images/
+│   └── zabbix-host-template.png
 ├── parsers/
 │   └── data_parser.py
+├── templates/
+│   ├── README.md
+│   ├── zbx_export_templates_inclinometro.yaml
+│   └── zbx_export_templates_pluviometro.yaml
 ├── tests/
 │   └── test_data_parser.py
 ├── utils/
@@ -277,10 +283,10 @@ Para soporte, escribe a robertocarlos.toapanta@gmail.com o únete a nuestro cana
 - Vincula el template apropiado al host como se muestra a continuación.
 
 <p align="center">
-  <img src="images/zabbix-host-template.png" alt="Zabbix: link template to host" width="700">
+  <img src="images/zabbix-host-template.png" alt="Zabbix: vincular template al host" width="700">
 </p>
 
-<sub>Figura N.01: Pantalla de configuración del host en Zabbix mostrando cómo vincular el template "Inclinómetro" a un host y asignar el grupo de hosts.</sub>
+<sub>Figura 1: Pantalla de configuración del host en Zabbix mostrando cómo vincular el template "Inclinómetro" a un host y asignar el grupo de hosts.</sub>
 
 ## Enlaces
 
