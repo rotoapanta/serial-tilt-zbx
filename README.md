@@ -276,7 +276,9 @@ For support, email robertocarlos.toapanta@gmail.com or join our Discord channel.
   - templates/zbx_export_templates_pluviometro.yaml
 - Link the appropriate template to the host as shown below.
 
-![Zabbix: link template to host](images/zabbix-host-template.png)
+<p align="center">
+  <img src="images/zabbix-host-template.png" alt="Zabbix: link template to host" width="800">
+</p>
 
 <sub>Figura N.01: Zabbix Host configuration screen showing how to link the "Inclinometer" template to a host and assign the host group.</sub>
 
