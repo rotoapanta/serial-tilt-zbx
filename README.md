@@ -277,7 +277,7 @@ For support, email robertocarlos.toapanta@gmail.com or join our Discord channel.
 - Link the appropriate template to the host as shown below.
 
 <p align="center">
-  <img src="images/zabbix-host-template.png" alt="Zabbix: link template to host" width="800">
+  <img src="images/zabbix-host-template.png" alt="Zabbix: link template to host" width="700">
 </p>
 
 <sub>Figura N.01: Zabbix Host configuration screen showing how to link the "Inclinometer" template to a host and assign the host group.</sub>
