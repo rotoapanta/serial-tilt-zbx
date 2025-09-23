@@ -197,8 +197,6 @@ python -m unittest discover tests
 2025-09-22 16:47:27,997 - utils.zabbix_sender - INFO - Sent 2 metrics to Zabbix 192.168.1.143:10051 for host GGPA_PL.
 ```
 
-Note: To render the screenshot, place an image at `images/console-output.png` in the repository.
-
 ## Feedback
 
 If you have any feedback, please reach out to us at robertocarlos.toapanta@gmail.com
