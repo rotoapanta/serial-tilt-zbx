@@ -179,17 +179,13 @@ python -m unittest discover tests
 
 ## Ejemplo de salida en consola
 
-![Salida de Consola](images/console-output.png)
-
-Salida de texto de ejemplo:
-
 ```
 (venv) pi@raspi-tilt:~/Documents/Projects/serial-tilt-zbx $ python main.py
 2025-09-22 16:47:08,333 - root - INFO - ==================================================
 2025-09-22 16:47:08,334 - root - INFO - Serial Tiltmeter to Zabbix Application Started
 2025-09-22 16:47:08,335 - root - INFO - ==================================================
 2025-09-22 16:47:08,336 - utils.zabbix_sender - INFO - zabbix_sender binary found.
-2025-09-22 16:47:08,349 - utils.zabbix_sender - INFO - Connectivity to Zabbix 192.168.1.143:10051 OK.
+2025-09-22 16:47:08,349 - utils.zabbix_sender - INFO - Connectivity to Zabbix 192.168.XXX.YYY:10051 OK.
 2025-09-22 16:47:08,350 - root - INFO - Starting serial port readers...
 2025-09-22 16:47:08,361 - utils.serial_reader - INFO - Successfully opened port /dev/ttyUSB0
 2025-09-22 16:47:08,363 - utils.serial_reader - INFO - Successfully opened port /dev/ttyUSB2
