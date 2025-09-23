@@ -4,7 +4,6 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/rotoapanta/serial-tilt-zbx)
 [![Discord Invite](https://img.shields.io/badge/discord-join%20now-green)](https://discord.gg/bf6rWDbJ) 
 [![Docker](https://img.shields.io/badge/Docker-No-brightgreen)](https://www.docker.com/) 
-[![GitHub](https://img.shields.io/badge/GitHub-Project-brightgreen)](https://github.com/rotoapanta/serial-tilt-zbx) 
 [![Linux](https://img.shields.io/badge/Linux-Supported-brightgreen)](https://www.linux.org/) 
 [![Author](https://img.shields.io/badge/Roberto%20-Toapanta-brightgreen)](https://www.linkedin.com/in/roberto-carlos-toapanta-g/) 
 [![Version](https://img.shields.io/badge/Version-1.0.0-brightgreen)](#change-log) 
