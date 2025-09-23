@@ -176,6 +176,19 @@ Follow these steps for a manual installation on any Linux system.
      python main.py
      ```
 
+## Zabbix templates and host linking
+
+- Import the templates from the templates/ directory:
+  - templates/zbx_export_templates_inclinometro.yaml
+  - templates/zbx_export_templates_pluviometro.yaml
+- Link the appropriate template to the host as shown below.
+
+<p align="center">
+  <img src="images/zabbix-host-template.png" alt="Zabbix: link template to host" width="700">
+</p>
+
+<sub>Figure 1: Zabbix Host configuration screen showing how to link the "Inclinometer" template to a host and assign the host group.</sub>
+
 ## Serial retry and supervisor configuration
 
 - Global defaults in `config.json`:
@@ -274,19 +287,6 @@ For support, email robertocarlos.toapanta@gmail.com or join our Discord channel.
 - Python logging cookbook: https://docs.python.org/3/howto/logging-cookbook.html
 - Python virtual environments (venv): https://docs.python.org/3/library/venv.html
 - unittest framework: https://docs.python.org/3/library/unittest.html
-
-## Zabbix templates and host linking
-
-- Import the templates from the templates/ directory:
-  - templates/zbx_export_templates_inclinometro.yaml
-  - templates/zbx_export_templates_pluviometro.yaml
-- Link the appropriate template to the host as shown below.
-
-<p align="center">
-  <img src="images/zabbix-host-template.png" alt="Zabbix: link template to host" width="700">
-</p>
-
-<sub>Figure 1: Zabbix Host configuration screen showing how to link the "Inclinometer" template to a host and assign the host group.</sub>
 
 ## Links
 

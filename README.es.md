@@ -176,6 +176,19 @@ Sigue estos pasos para una instalación manual en cualquier sistema Linux.
      python main.py
      ```
 
+## Plantillas de Zabbix y enlace con el host
+
+- Importa los templates desde el directorio templates/:
+  - templates/zbx_export_templates_inclinometro.yaml
+  - templates/zbx_export_templates_pluviometro.yaml
+- Vincula el template apropiado al host como se muestra a continuación.
+
+<p align="center">
+  <img src="images/zabbix-host-template.png" alt="Zabbix: vincular template al host" width="700">
+</p>
+
+<sub>Figura N.01: Pantalla de configuración del host en Zabbix mostrando cómo vincular el template "Inclinómetro" a un host y asignar el grupo de hosts.</sub>
+
 ## Configuración de reintentos y supervisor de serie
 
 - Valores globales en `config.json`:
@@ -274,19 +287,6 @@ Para soporte, escribe a robertocarlos.toapanta@gmail.com o únete a nuestro cana
 - Python logging cookbook: https://docs.python.org/3/howto/logging-cookbook.html
 - Entornos virtuales (venv): https://docs.python.org/3/library/venv.html
 - Framework unittest: https://docs.python.org/3/library/unittest.html
-
-## Plantillas de Zabbix y enlace con el host
-
-- Importa los templates desde el directorio templates/:
-  - templates/zbx_export_templates_inclinometro.yaml
-  - templates/zbx_export_templates_pluviometro.yaml
-- Vincula el template apropiado al host como se muestra a continuación.
-
-<p align="center">
-  <img src="images/zabbix-host-template.png" alt="Zabbix: vincular template al host" width="700">
-</p>
-
-<sub>Figura 1: Pantalla de configuración del host en Zabbix mostrando cómo vincular el template "Inclinómetro" a un host y asignar el grupo de hosts.</sub>
 
 ## Enlaces
 
